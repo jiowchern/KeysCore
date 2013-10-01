@@ -50,8 +50,11 @@
     <Compile Include="..\Common\common.cs">
       <Link>common.cs</Link>
     </Compile>
+    <Compile Include="Adventure.cs" />
+    <Compile Include="Battle.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Hall.cs" />
+    <Compile Include="Parking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StageFirst.cs" />
   </ItemGroup>

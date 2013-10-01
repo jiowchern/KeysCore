@@ -11,12 +11,12 @@ namespace Regulus.Project.Crystal.Game
 		public IStorage	Storage {get ; private set;}
 
 		public Regulus.Remoting.ISoulBinder Binder { get { return _Binder; }}
-		Regulus.Game.StageMachine<Core> _StageMachine;
+		Regulus.Game.StageMachine _StageMachine;
 		public Core(Regulus.Remoting.ISoulBinder binder , IStorage storage)
 		{
 			Storage = storage;
 			_Binder = binder;
-			_StageMachine = new Regulus.Game.StageMachine<Core>(this);
+			_StageMachine = new Regulus.Game.StageMachine();
 
 			binder.BreakEvent += _OnInactive;
 		}
@@ -35,10 +35,44 @@ namespace Regulus.Project.Crystal.Game
 			_ToFirst();
 		}
 
-		private void _ToFirst()
+		void _ToFirst()
 		{
-			_StageMachine.Push( new Regulus.Project.Crystal.Game.Stage.First() );
+            var first = new Regulus.Project.Crystal.Game.Stage.First(this);
+			_StageMachine.Push( first );
+            first.LoginSuccessEvent += _ToParking;
 		}
+
+        AccountInfomation _AccountInfomation;
+        void _ToParking(AccountInfomation account_infomation)
+        {
+            var stage = new Regulus.Project.Crystal.Game.Stage.Parking(account_infomation);
+            stage.SelectCompiledEvent += _ToAdventure;
+            stage.VerifyEvent += _ToFirst;
+            _StageMachine.Push(stage);
+            _AccountInfomation = account_infomation;
+        }
+
+        ActorInfomation _ActorInfomation;
+        void _ToAdventure(ActorInfomation actor_infomation)
+        {
+            
+            var stage = new Regulus.Project.Crystal.Game.Stage.Adventure();
+            stage.BattleEvent += _ToBattle;
+            stage.ParkingEvent += () => { _ToParking(_AccountInfomation); };
+            _StageMachine.Push(stage);
+
+            _ActorInfomation = actor_infomation;
+        }
+
+        void _ToBattle()
+        {
+            var stage = new Regulus.Project.Crystal.Game.Stage.Battle();
+            stage.EndEvent += () =>
+            {
+                _ToAdventure(_ActorInfomation);
+            };
+            _StageMachine.Push(stage);
+        }
 
 		public bool Update()
 		{

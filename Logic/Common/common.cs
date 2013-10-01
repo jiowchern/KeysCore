@@ -10,6 +10,12 @@ namespace Regulus.Project.Crystal
         void Quit();        
     };
 
+    public interface IParking
+    {
+        event Action<ActorInfomation> ActorInfomationEvent;
+        void SelectActor(Guid id);
+    };
+
 
     public interface IStorage
     {

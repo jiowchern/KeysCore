@@ -6,22 +6,25 @@ using System.Text;
 namespace Regulus.Project.Crystal.Game.Stage
 {
 	using Regulus.Project.Crystal.Game;
-	public class First : Regulus.Game.IStage<Core>, Regulus.Project.Crystal.IVerify
+	public class First : Regulus.Game.IStage, Regulus.Project.Crystal.IVerify
 	{
 		Core _Core;
-        Regulus.Game.StageLock Regulus.Game.IStage<Core>.Enter(Core obj)
-		{
-			_Core = obj;
+        public First(Core core)
+        {
+            _Core = core;
+        }
+        void Regulus.Game.IStage.Enter()
+		{			
 			_Core.Binder.Bind<Regulus.Project.Crystal.IVerify>(this);
-            return null;
+            
 		}
 
-		void Regulus.Game.IStage<Core>.Leave(Core obj)
+		void Regulus.Game.IStage.Leave()
 		{
 			_Core.Binder.Unbind<Regulus.Project.Crystal.IVerify>(this);
 		}
 
-		void Regulus.Game.IStage<Core>.Update(Core obj)
+		void Regulus.Game.IStage.Update()
 		{
 			
 		}
@@ -47,7 +50,9 @@ namespace Regulus.Project.Crystal.Game.Stage
 			return ret;
 		}
 
-		
+
+        public delegate void OnLoginSuccess(AccountInfomation account_infomation);
+        public event OnLoginSuccess LoginSuccessEvent;
 
 		Regulus.Remoting.Value<LoginResult> IVerify.Login(string name, string password)
 		{
@@ -58,8 +63,10 @@ namespace Regulus.Project.Crystal.Game.Stage
 				if (account_infomation != null && account_infomation.Password == password)
 				{
 					ret.SetValue(LoginResult.Success);
+                    LoginSuccessEvent(account_infomation);
 				}
-				ret.SetValue(LoginResult.Fail);
+                else
+				    ret.SetValue(LoginResult.Fail);
 			};
 			return ret;
 		}

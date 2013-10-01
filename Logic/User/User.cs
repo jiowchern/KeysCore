@@ -10,4 +10,16 @@ namespace Regulus.Project.Crystal
 	{
 		Regulus.Remoting.Ghost.IProviderNotice<IVerify> VerifyProvider { get ; }		
 	}
+
+    public static class UserGenerator
+    {
+        static public IUser BuildStandalong()
+        {
+            return new Regulus.Project.Crystal.Standalone.User();
+        }
+        static public IUser BuildRemoting()
+        {
+            return new Regulus.Project.Crystal.ConnectUser();
+        }
+    }
 }
