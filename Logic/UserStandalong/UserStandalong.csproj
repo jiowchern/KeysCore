@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6D0EC61E-F2B6-4E65-ADDC-23F09D397E54}</ProjectGuid>
+    <ProjectGuid>{CFBF8E3A-B9F3-48E4-82E5-1B834AE38683}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Game</RootNamespace>
-    <AssemblyName>Game</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>UserStandalong</RootNamespace>
+    <AssemblyName>UserStandalong</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,39 +30,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Remoting, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\Regulus\Remoting.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Utility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Library\Regulus\Utility.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Common\common.cs">
-      <Link>common.cs</Link>
-    </Compile>
-    <Compile Include="Adventure.cs" />
-    <Compile Include="Battle.cs" />
-    <Compile Include="Core.cs" />
-    <Compile Include="World.cs" />
-    <Compile Include="Hall.cs" />
-    <Compile Include="Parking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StageFirst.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Serializable\Serializable.csproj">
-      <Project>{4868ea9e-ecfd-462c-b053-dfc4b7e4785c}</Project>
-      <Name>Serializable</Name>
-    </ProjectReference>
+    <Compile Include="StandaloneUser.cs" />
+    <Compile Include="Storage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

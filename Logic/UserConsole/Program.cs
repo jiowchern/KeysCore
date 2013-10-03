@@ -40,9 +40,12 @@ namespace UserConsole
         {
             var view = new Regulus.Utility.ConsoleViewer();
             var input = new Input(view);
-            Regulus.Game.IFramework app = new Regulus.Project.Crystal.Application(view, input, new Regulus.Game.IFramework[] { input });
+            Regulus.Game.IFramework app = new Regulus.Project.Crystal.Application(view, input);
             app.Launch();
-            while (app.Update()) ;
+            while (app.Update())
+            {
+                input.Update();
+            }
             app.Shutdown();
             
        

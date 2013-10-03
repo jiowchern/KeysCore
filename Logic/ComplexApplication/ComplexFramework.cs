@@ -8,13 +8,12 @@ namespace Regulus.Project.Crystal
 {
 	class ComplexFramework : Regulus.Remoting.PhotonExpansion.IPhotonFramework
 	{
-		Regulus.Project.Crystal.Game.Hall	_Hall;
+        Game.World _World;
+		
 		Storage _Stroage;
 		void Regulus.Remoting.PhotonExpansion.IPhotonFramework.ObtainController(Regulus.Remoting.Soul.SoulProvider provider)
 		{
-
-            var user = _Hall.CreateUser(provider, _Stroage);
-
+            _World.Enter(provider);
 		}
 
 		void Regulus.Game.IFramework.Launch()
@@ -22,12 +21,13 @@ namespace Regulus.Project.Crystal
 			_Stroage = new Storage();
 			_Stroage.Initial();
 
-			_Hall = new Regulus.Project.Crystal.Game.Hall();		
+            _World = new Game.World(_Stroage);
+			
 		}
 
 		bool Regulus.Game.IFramework.Update()
 		{
-			_Hall.Update();
+            _World.Update();
 			return true;
 		}
 

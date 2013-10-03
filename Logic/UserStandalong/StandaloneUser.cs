@@ -6,30 +6,16 @@ using System.Text;
 namespace Regulus.Project.Crystal.Standalone
 {	
 	using Regulus.Project.Crystal.Game;
-
-
-    class Framework : Regulus.Utility.Singleton<Framework>
-    {
-        Storage _Storage;
-        public Regulus.Project.Crystal.Game.World World { get; private set; }
-        public Framework()
-        {
-            _Storage = new Storage();
-            World = new World(_Storage);
-        }
-
-        public void Update()
-        {            
-            World.Update();
-        }
-
-    }
 	class User : IUser
 	{
+        
+		
 		Regulus.Standalong.Agent _Agent ;
 		public User()
 		{
-            _Agent = new Regulus.Standalong.Agent();
+            _Agent = new Standalong.Agent();
+
+                
 		}
 
 		Regulus.Remoting.Ghost.IProviderNotice<IVerify> IUser.VerifyProvider
@@ -40,13 +26,13 @@ namespace Regulus.Project.Crystal.Standalone
 		public void Launch()
 		{			
 			_Agent.Launch();
-            Framework.Instance.World.Enter(_Agent);
+            _World.Enter(_Agent);			
 		}
 
 		public bool Update()
 		{
 			_Agent.Update();
-            Framework.Instance.Update();
+			
 			return true;
 		}
 

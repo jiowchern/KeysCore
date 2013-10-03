@@ -7,7 +7,7 @@ namespace Regulus.Project.Crystal.Standalone
 {
 	class Storage : Regulus.Project.Crystal.IStorage
 	{
-		Regulus.Remoting.Value<AccountInfomation> IStorage.FindAccountInfomation(string name)
+		Remoting.Value<AccountInfomation> IStorage.FindAccountInfomation(string name)
 		{
 			return new AccountInfomation() { Id = Guid.Empty , Name = name , Password = "1" };
 		}

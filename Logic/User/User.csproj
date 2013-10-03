@@ -59,8 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
-    <Compile Include="ConnectUser.cs" />
+    <Compile Include="RemotingUser.cs" />
     <Compile Include="StandaloneUser.cs" />
+    <Compile Include="StandalongUserController.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

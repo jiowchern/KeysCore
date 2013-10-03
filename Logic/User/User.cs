@@ -14,12 +14,12 @@ namespace Regulus.Project.Crystal
     public static class UserGenerator
     {
         static public IUser BuildStandalong()
-        {
+        {            
             return new Regulus.Project.Crystal.Standalone.User();
         }
         static public IUser BuildRemoting()
         {
-            return new Regulus.Project.Crystal.ConnectUser();
+            return new Regulus.Project.Crystal.Remoting.User();
         }
     }
 }
