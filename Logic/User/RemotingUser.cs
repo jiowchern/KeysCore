@@ -32,6 +32,24 @@ namespace Regulus.Project.Crystal.Remoting
         {
             throw new NotImplementedException();
         }
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IUserStatus> IUser.StatusProvider
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IParking> IUser.ParkingProvider
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IAdventure> IUser.AdventureProvider
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }
 

@@ -14,36 +14,37 @@ namespace Regulus.Project.Crystal.Game.Stage
         public event OnVerify VerifyEvent;
 
         private AccountInfomation _AccountInfomation;
+        private Remoting.ISoulBinder _Binder;
+        
 
-        public Parking(AccountInfomation account_infomation)
-        {
-            // TODO: Complete member initialization
+        public Parking(Remoting.ISoulBinder binder, AccountInfomation account_infomation)
+        {            
+            this._Binder = binder;
+            
             this._AccountInfomation = account_infomation;
+            
         }
         void Regulus.Game.IStage.Enter()
         {
-            
+            _Binder.Bind<Regulus.Project.Crystal.IParking>(this);
         }
 
         void Regulus.Game.IStage.Leave()
         {
-            
+            _Binder.Unbind<Regulus.Project.Crystal.IParking>(this);
         }
 
         void Regulus.Game.IStage.Update()
         {
             
         }
+        
 
-        event Action<ActorInfomation> IParking.ActorInfomationEvent
+        Remoting.Value<ActorInfomation> IParking.SelectActor(Guid id)
         {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        void IParking.SelectActor(Guid id)
-        {
-            
+            var a = new ActorInfomation() { Id = id };
+            SelectCompiledEvent(a);
+            return a;
         }
     }
 }

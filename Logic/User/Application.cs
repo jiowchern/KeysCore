@@ -8,8 +8,7 @@ namespace Regulus.Project.Crystal
 {
     public class Application : Regulus.Game.ConsoleFramework<Regulus.Project.Crystal.IUser> 
     {
-        Regulus.Utility.Console.IViewer _View;
-        Regulus.Utility.Console.IInput _Input;
+        
         static Application.ControllerProvider[] providers = new Application.ControllerProvider[] 
             {
                 new Application.ControllerProvider { Command = "standalong" , Spawn =  _BuildStandalong},
@@ -18,7 +17,7 @@ namespace Regulus.Project.Crystal
 
         private static IController _BuildRemoting()
         {
-            return null;
+            throw new SystemException("遠端系統尚未製作..");
         }
 
         private static IController _BuildStandalong()
@@ -28,9 +27,6 @@ namespace Regulus.Project.Crystal
         public Application(Regulus.Utility.Console.IViewer view, Regulus.Utility.Console.IInput input)
             : base(view, input, providers)
         {
-            _View = view;
-            _Input = input;
-            
         }
     }
 }

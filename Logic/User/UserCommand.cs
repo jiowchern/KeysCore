@@ -16,8 +16,58 @@ namespace Regulus.Project.Crystal
             _System = system;
             _View = view;
             _Command = command;
-            _System.VerifyProvider.Supply += _OnVerifySupply ;
+            _System.VerifyProvider.Supply += _OnVerifySupply ;            
             _System.VerifyProvider.Unsupply += _Unsupply;
+
+            _System.StatusProvider.Supply += _OnStatusSupply;
+            _System.StatusProvider.Unsupply += _Unsupply;
+
+            _System.ParkingProvider.Supply += _OnParkingSupply;
+            _System.ParkingProvider.Unsupply += _Unsupply;
+
+            _System.AdventureProvider.Supply += _OnAdventureSupply;
+            _System.AdventureProvider.Unsupply += _Unsupply;
+        }
+
+        private void _OnAdventureSupply(IAdventure adventure)
+        {
+            _Command.Register("InBattle", adventure.InBattle);
+            _Commands.Add(adventure, new string[] 
+            {
+                "InBattle" 
+            });
+        }
+
+        private void _OnParkingSupply(IParking parking)
+        {
+            Func<Regulus.Remoting.Value<ActorInfomation>> selectActor = () =>
+            {                
+                return parking.SelectActor(Guid.NewGuid());
+            };
+            
+            Action<ActorInfomation> selectActorReturn = (actorInfomation) =>
+            {
+                _View.WriteLine("選擇角色 : " + actorInfomation.Id );
+            };
+
+            _Command.RemotingRegister("SelectActor", selectActor, selectActorReturn);
+
+            _Commands.Add(parking, new string[] 
+            {
+                "SelectActor" 
+            });
+        }
+
+        
+
+        private void _OnStatusSupply(IUserStatus status)
+        {
+            status.StatusEvent += _OnUserStatusChanged;
+        }
+
+        void _OnUserStatusChanged(UserStatus status)
+        {
+            _View.WriteLine("遊戲狀態改變" + status);
         }
 
         void _Unsupply<T>(T obj)
@@ -30,6 +80,8 @@ namespace Regulus.Project.Crystal
                     _Command.Unregister(command);
                 }
             }
+
+            _Commands.Remove(obj);
         }
 
         System.Collections.Generic.Dictionary<object, string[]> _Commands = new Dictionary<object, string[]>();
@@ -52,6 +104,17 @@ namespace Regulus.Project.Crystal
             {
                 "CreateAccount" , "Login" , "Exit"
             });
+        }
+
+        internal void Release()
+        {
+            foreach (var command in _Commands)
+            {
+                foreach(var cmd in command.Value)
+                {
+                    _Command.Unregister(cmd);
+                }                
+            }            
         }
     }
 }

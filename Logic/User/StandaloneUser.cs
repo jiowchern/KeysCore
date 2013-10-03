@@ -54,5 +54,38 @@ namespace Regulus.Project.Crystal.Standalone
 		{
 			_Agent.Shutdown();			
 		}
-	}
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IUserStatus> IUser.StatusProvider
+        {
+            get { return _Agent.QueryProvider<IUserStatus>(); }
+        }
+
+        void Regulus.Game.IFramework.Launch()
+        {
+            throw new NotImplementedException();
+        }
+
+        void Regulus.Game.IFramework.Shutdown()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool Regulus.Game.IFramework.Update()
+        {
+            throw new NotImplementedException();
+        }
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IParking> IUser.ParkingProvider
+        {
+            get { return _Agent.QueryProvider<IParking>(); }
+        }
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IAdventure> IUser.AdventureProvider
+        {
+            get { return _Agent.QueryProvider<IAdventure>(); }
+        }
+    }
 }

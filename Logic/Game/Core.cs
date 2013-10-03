@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Regulus.Project.Crystal.Game
 {
-	public class Core : Regulus.Game.IFramework
+    public class Core : Regulus.Game.IFramework, IUserStatus
 	{
 		Regulus.Remoting.ISoulBinder _Binder;
 		public IStorage	Storage {get ; private set;}
@@ -16,9 +16,11 @@ namespace Regulus.Project.Crystal.Game
 		{
 			Storage = storage;
 			_Binder = binder;
+            _Binder.Bind<IUserStatus>(this);
 			_StageMachine = new Regulus.Game.StageMachine();
 
 			binder.BreakEvent += _OnInactive;
+            _StatusEvent += (s) => { };
 		}
 		~Core()
 		{
@@ -40,28 +42,31 @@ namespace Regulus.Project.Crystal.Game
             var first = new Regulus.Project.Crystal.Game.Stage.First(this);
 			_StageMachine.Push( first );
             first.LoginSuccessEvent += _ToParking;
+            _StatusEvent(UserStatus.Verify);             
 		}
 
         AccountInfomation _AccountInfomation;
         void _ToParking(AccountInfomation account_infomation)
         {
-            var stage = new Regulus.Project.Crystal.Game.Stage.Parking(account_infomation);
+            var stage = new Regulus.Project.Crystal.Game.Stage.Parking(Binder , account_infomation);
             stage.SelectCompiledEvent += _ToAdventure;
             stage.VerifyEvent += _ToFirst;
             _StageMachine.Push(stage);
             _AccountInfomation = account_infomation;
+            _StatusEvent(UserStatus.Parking);
         }
 
         ActorInfomation _ActorInfomation;
         void _ToAdventure(ActorInfomation actor_infomation)
         {
-            
-            var stage = new Regulus.Project.Crystal.Game.Stage.Adventure();
+
+            var stage = new Regulus.Project.Crystal.Game.Stage.Adventure(Binder);
             stage.BattleEvent += _ToBattle;
             stage.ParkingEvent += () => { _ToParking(_AccountInfomation); };
             _StageMachine.Push(stage);
 
             _ActorInfomation = actor_infomation;
+            _StatusEvent(UserStatus.Adventure);
         }
 
         void _ToBattle()
@@ -72,6 +77,7 @@ namespace Regulus.Project.Crystal.Game
                 _ToAdventure(_ActorInfomation);
             };
             _StageMachine.Push(stage);
+            _StatusEvent(UserStatus.Battle);
         }
 
 		public bool Update()
@@ -85,5 +91,12 @@ namespace Regulus.Project.Crystal.Game
 		}
 
 		public event Action InactiveEvent;
-	}
+
+        event Action<UserStatus> _StatusEvent;
+        event Action<UserStatus> IUserStatus.StatusEvent
+        {
+            add { _StatusEvent += value; }
+            remove { _StatusEvent -= value; }
+        }
+    }
 }

@@ -39,7 +39,7 @@ namespace Regulus.Project.Crystal.Standalong
 
         void Regulus.Game.ConsoleFramework<IUser>.IController.Release()
         {
-            
+            _UserCommand.Release();
         }
 
         IUser Regulus.Game.ConsoleFramework<IUser>.IController.User

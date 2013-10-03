@@ -16,9 +16,18 @@ namespace Regulus.Project.Crystal
 
     [Serializable]
     public class ActorInfomation
-    { 
+    {
+        public Guid Id { get; set; }
     }
-
+    [Serializable]
+    public enum UserStatus
+    {
+        None,
+        Verify,
+        Parking,
+        Adventure,
+        Battle,
+    }
 	[Serializable]
 	public enum LoginResult
 	{

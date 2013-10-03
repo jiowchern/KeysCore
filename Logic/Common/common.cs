@@ -3,6 +3,10 @@ using System;
 namespace Regulus.Project.Crystal
 {
     using Regulus.Remoting;
+    public interface IUserStatus
+    {
+        event Action<UserStatus> StatusEvent;
+    }
     public interface IVerify
     {        
         Value<bool> CreateAccount(string name, string password);
@@ -11,11 +15,14 @@ namespace Regulus.Project.Crystal
     };
 
     public interface IParking
-    {
-        event Action<ActorInfomation> ActorInfomationEvent;
-        void SelectActor(Guid id);
+    {        
+        Value<ActorInfomation> SelectActor(Guid id);
     };
 
+    public interface IAdventure
+    {
+        void InBattle();
+    }
 
     public interface IStorage
     {
