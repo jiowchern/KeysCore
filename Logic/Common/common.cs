@@ -29,6 +29,17 @@ namespace Regulus.Project.Crystal
         Value<AccountInfomation> FindAccountInfomation(string name);
 		
         void Add(AccountInfomation ai);
+        void Add(Pet pet);
+        
+        Value<Pet> FindPet(Guid id);
     }
+
+    public interface IEntity
+    {
+        Guid Id { get; }
+        T QueryAttrib<T>();
+    }
+
+    
 
 }

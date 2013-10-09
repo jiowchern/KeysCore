@@ -11,11 +11,11 @@ namespace Regulus.Project.Crystal.Standalone
     class Framework : Regulus.Utility.Singleton<Framework>
     {
         Storage _Storage;
-        public Regulus.Project.Crystal.Game.World World { get; private set; }
+        public Regulus.Project.Crystal.Game.Zone World { get; private set; }
         public Framework()
         {
             _Storage = new Storage();
-            World = new World(_Storage);
+            World = new Zone(_Storage);
         }
 
         public void Update()

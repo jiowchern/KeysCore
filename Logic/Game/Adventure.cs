@@ -7,41 +7,65 @@ namespace Regulus.Project.Crystal.Game.Stage
 {
     class Adventure : Regulus.Game.IStage, IAdventure
     {
-        public delegate void OnBattle();
+        public delegate void OnBattle(Guid battle_field);
         public event OnBattle BattleEvent;
 
         public delegate void OnParking();
         public event OnParking ParkingEvent;
         private Remoting.ISoulBinder _Binder;
+        IMap _Zone;
+        ActorInfomation _ActorInfomation;
 
-        public Adventure(Remoting.ISoulBinder binder)
+        Entity _Entity;
+        public Adventure(ActorInfomation actor_infomation , Remoting.ISoulBinder binder, IMap zone)
         {
-            // TODO: Complete member initialization
-            this._Binder = binder;
+            _ActorInfomation = actor_infomation;
+            _Zone = zone;
             
+            this._Binder = binder;
+
+            _Entity = new Entity();
         }
 
         void Regulus.Game.IStage.Enter()
         {
             _Binder.Bind<IAdventure>(this);
+            _Zone.Enter(_Entity);
+            _Zone.BattleEvent += _OnBattle;
+            
+
+            
+            
+        }
+
+        void _OnBattle(Guid field, Guid battler)
+        {
+            if (_Entity.Id == battler)
+            {
+                BattleEvent(field);
+            }
         }
 
         void Regulus.Game.IStage.Leave()
         {
-            _Binder.Unbind<IAdventure>(this);
+            _Zone.BattleEvent -= _OnBattle;
+
+            _Zone.Leave(_Entity);
+            _Binder.Unbind<IAdventure>(this);            
         }
+
+        
 
         void Regulus.Game.IStage.Update()
         {
             
         }
-
         void IAdventure.InBattle()
         {
-            /*
-             * 測試用Function 需要產生對應的戰鬥資訊
-             */
-            BattleEvent();
+            _Zone.Battle(_Entity.Id);
+            
+            
         }
+        
     }
 }

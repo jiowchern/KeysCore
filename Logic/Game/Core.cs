@@ -9,11 +9,15 @@ namespace Regulus.Project.Crystal.Game
 	{
 		Regulus.Remoting.ISoulBinder _Binder;
 		public IStorage	Storage {get ; private set;}
+        IMap _Zone;
+        Battle.IZone _Battle;
 
 		public Regulus.Remoting.ISoulBinder Binder { get { return _Binder; }}
 		Regulus.Game.StageMachine _StageMachine;
-		public Core(Regulus.Remoting.ISoulBinder binder , IStorage storage)
+        public Core(Regulus.Remoting.ISoulBinder binder, IStorage storage, IMap zone , Battle.IZone battle)
 		{
+            _Battle = battle;
+            _Zone = zone; 
 			Storage = storage;
 			_Binder = binder;
             _Binder.Bind<IUserStatus>(this);
@@ -60,7 +64,7 @@ namespace Regulus.Project.Crystal.Game
         void _ToAdventure(ActorInfomation actor_infomation)
         {
 
-            var stage = new Regulus.Project.Crystal.Game.Stage.Adventure(Binder);
+            var stage = new Regulus.Project.Crystal.Game.Stage.Adventure(actor_infomation , Binder, _Zone);
             stage.BattleEvent += _ToBattle;
             stage.ParkingEvent += () => { _ToParking(_AccountInfomation); };
             _StageMachine.Push(stage);
@@ -69,9 +73,9 @@ namespace Regulus.Project.Crystal.Game
             _StatusEvent(UserStatus.Adventure);
         }
 
-        void _ToBattle()
+        void _ToBattle(Guid battle_field)
         {
-            var stage = new Regulus.Project.Crystal.Game.Stage.Battle();
+            var stage = new Regulus.Project.Crystal.Game.Stage.Battle(battle_field, _AccountInfomation, Binder, _Battle, Storage);
             stage.EndEvent += () =>
             {
                 _ToAdventure(_ActorInfomation);

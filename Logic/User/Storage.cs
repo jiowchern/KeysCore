@@ -17,7 +17,14 @@ namespace Regulus.Project.Crystal.Standalone
 			
 		}
 
+        Regulus.Remoting.Value<Pet> IStorage.FindPet(Guid id)
+        {
+            return new Pet();
+        }
 
-		
-	}
+        void IStorage.Add(Pet pet)
+        {
+            
+        }
+    }
 }

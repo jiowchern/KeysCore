@@ -31,6 +31,17 @@ namespace Regulus.Project.Crystal
         {
             _Database.Add(ai);
         }
-		
-	}
+
+
+
+        void IStorage.Add(Pet pet)
+        {
+            _Database.Add(pet);
+        }
+
+        Remoting.Value<Pet> IStorage.FindPet(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

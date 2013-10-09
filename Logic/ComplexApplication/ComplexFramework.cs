@@ -8,7 +8,7 @@ namespace Regulus.Project.Crystal
 {
 	class ComplexFramework : Regulus.Remoting.PhotonExpansion.IPhotonFramework
 	{
-        Game.World _World;
+        Game.Zone _World;
 		
 		Storage _Stroage;
 		void Regulus.Remoting.PhotonExpansion.IPhotonFramework.ObtainController(Regulus.Remoting.Soul.SoulProvider provider)
@@ -21,7 +21,7 @@ namespace Regulus.Project.Crystal
 			_Stroage = new Storage();
 			_Stroage.Initial();
 
-            _World = new Game.World(_Stroage);
+            _World = new Game.Zone(_Stroage);
 			
 		}
 
