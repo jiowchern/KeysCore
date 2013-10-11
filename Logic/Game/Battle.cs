@@ -7,11 +7,9 @@ namespace Regulus.Project.Crystal.Battle
 {
     public interface IZone
     {
-        Regulus.Remoting.Value<BattleResponse> Open(BattleRequester requester);
+        Regulus.Remoting.Value<IBattleAdmissionTickets> Open(BattleRequester requester);
         
     }
-
-
     class Battler
     {
         public Guid Id { get; set; }
@@ -20,61 +18,191 @@ namespace Regulus.Project.Crystal.Battle
 
         public Pet Pet { get; set; }
     }
-
-    class Field
+    class Chip
     {
-        public Field()
+
+    };
+    partial class Field : Regulus.Game.IFramework
+    {
+        
+        public class ChipLibrary
+        {
+            Queue<Chip> _Chips;
+
+            public int Count { get { return _Chips.Count;  } }
+            public ChipLibrary() : this(new Chip[] {})
+            { 
+            }
+            public ChipLibrary(Chip[] chips)
+            {
+                _Chips = new Queue<Chip>(chips);
+                Shuffle();
+            }
+
+            public void Shuffle()
+            {
+                var chips = _Chips.ToArray();
+                int[] indexs = new int[chips.Length];
+                for (int i = 0; i < chips.Length; ++i)
+                {
+                    indexs[i] = i;
+                }
+                for (int i = 0; i < chips.Length; ++i)
+                { 
+                    var swapIndex = Regulus.Utility.Random.Next(0 , chips.Length);
+                    var tempChip = chips[i];
+                    chips[i] = chips[swapIndex];
+                    chips[swapIndex] = tempChip;
+                }
+                _Chips = new Queue<Chip>(chips);
+            }
+
+            public Chip Pop()
+            {
+                return _Chips.Dequeue();                   
+            }
+
+            public void Push(Chip chip)
+            {
+                _Chips.Enqueue(chip);
+            }
+        }
+
+        public class Player : IReadyCaptureEnergy
+        {
+            public const int EnableChipCount = 5;
+            public BattlerSide Side;
+            public Pet Pet;
+            public Energy Energy;
+            public int Attack;
+            public int Defence;
+            public int Speed;
+            public ChipLibrary SourceChip;
+            public Chip[] StandbyChip;
+            public List<Chip> EnableChips;
+            public ChipLibrary RecycleChip;
+            public delegate void OnUsedChip (int[] chip_indexs);
+            public event OnUsedChip UsedChipEvent;
+
+            
+            void IReadyCaptureEnergy.UseChip(int[] chip_indexs)
+            {
+                int enableCount = _EnableChips(chip_indexs);                
+                Queue<Chip> chips = _Supplementary(enableCount);
+                _InsertStandby(chips);
+
+
+            }
+
+            private void _InsertStandby(Queue<Chip> chips)
+            {
+                for (int i = 0; i < StandbyChip.Length && chips.Count > 0; ++i)
+                {
+                    if (StandbyChip[i] == null)
+                    {
+                        StandbyChip[i] = chips.Dequeue();
+                    }
+                }
+            }
+
+            private int _EnableChips(int[] chip_indexs)
+            {
+                int count = 0;
+                if (EnableChips.Count < EnableChipCount)
+                {
+                    foreach (var index in chip_indexs)
+                    {
+                        if (index < StandbyChip.Length && StandbyChip[index] != null)
+                        {
+                            var chip = StandbyChip[index];
+                            StandbyChip[index] = null;
+                            EnableChips.Add(chip);
+                            count++;
+                        }
+                    }
+                }
+                return count;
+            }
+
+            private Queue<Chip> _Supplementary(int count)
+            {
+                Queue<Chip> chips = new Queue<Chip>();
+                for (int i = 0; i < count; ++i)
+                {
+                    if (SourceChip.Count == 0)
+                    {
+                        RecycleChip.Shuffle();
+                        SourceChip = RecycleChip;
+                        RecycleChip = new ChipLibrary();
+                    }
+
+                    chips.Enqueue(SourceChip.Pop());
+                }
+                return chips;
+            }
+        }
+        public delegate void OnFirst(WaittingConnectStage wcs);
+        public OnFirst FirstEvent; 
+        public Field(BattlerInfomation[] battlerInfomation)
         {
             Id = Guid.NewGuid();
             _Machine = new Regulus.Game.StageMachine();
+            FirstEvent(_Begin(battlerInfomation));
         }
         public Guid Id { get; private set; }        
         Regulus.Game.StageMachine _Machine;
-
-        internal WaittingConnectStage Begin(BattlerInfomation[] battlerInfomation)
+        
+        WaittingConnectStage _Begin(BattlerInfomation[] battlerInfomation)
         {
             var rcs = new WaittingConnectStage(battlerInfomation);
             rcs.ReadyEvent += _ToInitialGame;
             _Machine.Push(rcs);
             return rcs;
         }
-        public void Update()
+
+
+
+        void _ToInitialGame(ReadyCaptureEnergyStage stage)
+        {
+            _Machine.Push(stage);            
+        }
+
+        void Regulus.Game.IFramework.Launch()
+        {
+            
+        }
+
+        void Regulus.Game.IFramework.Shutdown()
+        {
+            
+        }
+
+        bool Regulus.Game.IFramework.Update()
         {
             _Machine.Update();
-        }
-        class Player
-        {            
-            public BattlerSide Side;
-            public Pet Pet;
-            public Pet.Energy[] EnergySlots;
-            public int Attack;
-            public int Defence;
-        }
-        void _ToInitialGame(Field.WaittingConnectStage.ReadyInfomation[] pets)
-        {
-            foreach (var pet in pets)
-            {
-                Player player = new Player();
-                player.Pet = pet.Pet;
-                player.EnergySlots = 
-            }
+            return true;
         }
     }
 
     public class Zone : IZone
     {
-        List<Field> _Fields;
+        Regulus.Game.FrameworkRoot _Fields;
+        
         public Zone()
         {
-            _Fields = new List<Field>();
+            _Fields = new Regulus.Game.FrameworkRoot();
         }
-        Remoting.Value<BattleResponse> IZone.Open(BattleRequester requester)
+        Remoting.Value<IBattleAdmissionTickets> IZone.Open(BattleRequester requester)
         {
-            var field = new Field();
-            field.Begin(requester.Battlers.ToArray());
-            var response = new BattleResponse();
-            response.FieldId = field.Id;
-            return response;
+            Remoting.Value<IBattleAdmissionTickets> ret = new Remoting.Value<IBattleAdmissionTickets>();
+            var field = new Field(requester.Battlers.ToArray());
+            field.FirstEvent += (val) =>
+            {                
+                ret.SetValue(val);
+            };
+            _Fields.AddFramework(field);
+            
+            return ret;
         }
                
     }
@@ -86,22 +214,21 @@ namespace Regulus.Project.Crystal.Game.Stage
     {
 
         public delegate void OnEnd();
-        public event OnEnd EndEvent;
-        private Guid battle_field;
+        public event OnEnd EndEvent;        
         private AccountInfomation _AccountInfomation;
-        private Remoting.ISoulBinder Binder;
+        private Remoting.ISoulBinder _Binder;
         private Crystal.Battle.IZone _BattleZone;
         IStorage _Storage;
 
         Pet _Pet;
-
-        public Battle(Guid battle_field, AccountInfomation _AccountInfomation, Remoting.ISoulBinder Binder, Crystal.Battle.IZone battle , IStorage stroage)
+        IBattleAdmissionTickets _BattleAdmissionTickets;
+        public Battle(IBattleAdmissionTickets battle_admission_tickets, AccountInfomation account_infomation, Remoting.ISoulBinder binder, Crystal.Battle.IZone battle, IStorage stroage)
         {
-            
-            this.battle_field = battle_field;
-            this._AccountInfomation = _AccountInfomation;
-            this.Binder = Binder;
-            this._BattleZone = battle;
+
+            _BattleAdmissionTickets = battle_admission_tickets;
+            _AccountInfomation = account_infomation;
+            _Binder = binder;
+            _BattleZone = battle;
             _Storage = stroage;
         }
         void Regulus.Game.IStage.Enter()
@@ -114,7 +241,7 @@ namespace Regulus.Project.Crystal.Game.Stage
         void _OnPetReady(Pet pet)
         {
             _Pet = pet;
-            
+            _BattleAdmissionTickets.Visit(_Pet);            
         }
 
         void Regulus.Game.IStage.Leave()

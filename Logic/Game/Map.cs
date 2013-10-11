@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Regulus.Project.Crystal.Game
 {
+    public delegate void OnMapBattle(Guid battler , IBattleAdmissionTickets battle_admission_tickets);
     class Map : IMap
     {
         List<IEntity> _Entitys;
@@ -24,7 +25,7 @@ namespace Regulus.Project.Crystal.Game
             _Entitys.Remove(entity);
         }
 
-        void IMap.Battle(Guid requester)
+        void IMap.BattleRequest(Guid requester)
         {
             BattleRequester br = new BattleRequester();
             int size = 0;
@@ -39,19 +40,19 @@ namespace Regulus.Project.Crystal.Game
 
             _BroadcastBattler(_Battle.Open(br), (from battler in br.Battlers select battler.Id).ToArray());
         }
-        private void _BroadcastBattler(Remoting.Value<BattleResponse> value, Guid[] battlers)
+        private void _BroadcastBattler(Remoting.Value<IBattleAdmissionTickets> value, Guid[] battlers)
         {
-            value.OnValue += (response) =>
+            value.OnValue += (battle_admission_tickets) =>
             {
                 foreach (var battler in battlers)
                 {
-                    _BattleEvent(response.FieldId, battler);
+                    _BattleEvent(battler , battle_admission_tickets);
                 }
             };
         }
 
         event OnMapBattle _BattleEvent;
-        event OnMapBattle IMap.BattleEvent
+        event OnMapBattle IMap.BattleResponseEvent
         {
             add { _BattleEvent += value; }
             remove { _BattleEvent -= value; }

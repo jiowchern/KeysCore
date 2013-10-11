@@ -41,5 +41,15 @@ namespace Regulus.Project.Crystal
     }
 
     
+    public interface IBattleAdmissionTickets
+    {
+        Value<IReadyCaptureEnergy> Visit(Pet pet);        
+    }
+
+    public interface IReadyCaptureEnergy
+    {
+        void UseChip(int[] chip_indexs);
+    }
+    
 
 }

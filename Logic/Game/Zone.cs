@@ -10,12 +10,12 @@ namespace Regulus.Project.Crystal.Game
         void Enter(IEntity entity);
         void Leave(IEntity entity);
 
-        void Battle(Guid id);
+        void BattleRequest(Guid id);
 
-        event OnMapBattle BattleEvent;
+        event OnMapBattle BattleResponseEvent;
     }
+
     
-    public delegate void OnMapBattle(Guid field, Guid battler);
     
 
     public class Zone 

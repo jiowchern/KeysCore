@@ -78,22 +78,17 @@ namespace Regulus.Project.Crystal
 
     [Serializable]
     public class Energy
-    {
+    {        
         public int Red { get; private set; }
         public int Yellow { get; private set; }
         public int Green { get; private set; }
-        public Game.Value<int> Power { get; private set; }
+        public int Power { get; private set; }
         int _TotalMax;
 
         public Energy(int total_max)
-        {
-            Power = new Game.Value<int>(0, 1);
+        {                
             _TotalMax = total_max;
-        }
-        public void Absorb(int r, int y, int g, int p)
-        { 
-                
-        }
+        }        
         public void Consume(int r, int y, int g, int p)
         {
             if (Check(r, y, g, p))
@@ -101,23 +96,20 @@ namespace Regulus.Project.Crystal
                 Red -= r;
                 Yellow -= y;
                 Green -= g;
-                //Power -= p;
+                Power -= p;
             }
         }
         public bool Check(int r, int y, int g, int p)
         {
-            return Red >= r && Yellow >= y && Green >= g && Power == p;
+            return Red >= r && Yellow >= y && Green >= g && Power >= p;
         }
     };
     [Serializable]
     public class Pet
-    {
-        
-        
+    {                
         public Guid Id { get; set; }
         public Guid Owner { get; set; }
         public Energy Energy { get; set; }
-
     }
 	[Serializable]
 	public class AccountInfomation
@@ -157,15 +149,7 @@ namespace Regulus.Project.Crystal
         Blue,Red
     }
 
-    [Serializable]
-    public class BattleResponse
-    {
-        public BattleResponse()
-        {            
-        }
-        public Guid FieldId { get; set; }
-        
-    }
+    
     [Serializable]
     public class BattlerInfomation
     {

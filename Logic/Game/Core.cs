@@ -65,7 +65,7 @@ namespace Regulus.Project.Crystal.Game
         {
 
             var stage = new Regulus.Project.Crystal.Game.Stage.Adventure(actor_infomation , Binder, _Zone);
-            stage.BattleEvent += _ToBattle;
+            stage.ToBattleStageEvent += _ToBattle;
             stage.ParkingEvent += () => { _ToParking(_AccountInfomation); };
             _StageMachine.Push(stage);
 
@@ -73,9 +73,9 @@ namespace Regulus.Project.Crystal.Game
             _StatusEvent(UserStatus.Adventure);
         }
 
-        void _ToBattle(Guid battle_field)
+        void _ToBattle(IBattleAdmissionTickets battle_admission_tickets)
         {
-            var stage = new Regulus.Project.Crystal.Game.Stage.Battle(battle_field, _AccountInfomation, Binder, _Battle, Storage);
+            var stage = new Regulus.Project.Crystal.Game.Stage.Battle(battle_admission_tickets, _AccountInfomation, Binder, _Battle, Storage);
             stage.EndEvent += () =>
             {
                 _ToAdventure(_ActorInfomation);
