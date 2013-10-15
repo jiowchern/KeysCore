@@ -77,6 +77,14 @@ namespace Regulus.Project.Crystal
     };
 
     [Serializable]
+    public class EnergyGroup
+    {
+        public Energy Energy;
+        public int Round;
+        public Guid Owner;
+    }
+
+    [Serializable]
     public class Energy
     {        
         public int Red { get; private set; }
@@ -88,7 +96,35 @@ namespace Regulus.Project.Crystal
         public Energy(int total_max)
         {                
             _TotalMax = total_max;
-        }        
+        }
+        public bool _CheckTotal()
+        {
+            return Red + Yellow + Green <= _TotalMax;
+        }
+
+        public void IncRed()
+        {
+            if (_CheckTotal())
+                Red++;
+        }
+
+        public void IncYellow()
+        {
+            if (_CheckTotal())
+                Yellow++;
+        }
+        public void IncGreen()
+        {
+            if (_CheckTotal())
+                Green++;
+        }
+
+        public void IncPower()
+        {
+            if (Power == 0)
+                Power++;
+        }
+
         public void Consume(int r, int y, int g, int p)
         {
             if (Check(r, y, g, p))

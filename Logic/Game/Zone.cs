@@ -23,7 +23,7 @@ namespace Regulus.Project.Crystal.Game
         Regulus.Project.Crystal.Game.Hall _Hall;
         IStorage _Storage;
         Battle.Zone _Battle;
-
+        Regulus.Game.FrameworkRoot _Loopers;
         Map _Map;
         public Zone(IStorage storage)
         {
@@ -31,6 +31,9 @@ namespace Regulus.Project.Crystal.Game
             _Hall = new Hall();
             _Battle = new Battle.Zone();
             _Map = new Map(_Battle);
+
+            _Loopers = new Regulus.Game.FrameworkRoot();
+            _Loopers.AddFramework(_Battle);
         }
 
         public void Enter(Regulus.Remoting.ISoulBinder binder)
@@ -41,6 +44,7 @@ namespace Regulus.Project.Crystal.Game
         public void Update()
         {
             _Hall.Update();
+            _Loopers.Update();
         }
 
        

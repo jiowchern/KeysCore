@@ -11,13 +11,13 @@ namespace Regulus.Project.Crystal.Battle
         {
             public class ReadyInfomation
             {
-                public Regulus.Remoting.Value<IReadyCaptureEnergy> ReadyCaptureEnergy;
+                public Regulus.Remoting.Value<IBattleStage> ReadyCaptureEnergy;
                 public BattlerInfomation Battler;
                 public Pet Pet;
             }
 
             List<ReadyInfomation> _ReadyInfomations;
-            ReadyCaptureEnergyStage _Next;
+            
             public delegate void OnReady(ReadyCaptureEnergyStage stage);
             event OnReady _ReadyEvent;
             public event OnReady ReadyEvent { add { _ReadyEvent += value; } remove { } }
@@ -37,9 +37,7 @@ namespace Regulus.Project.Crystal.Battle
                 }
 
                 _Timeout = new Utility.TimeCounter();
-
-
-                _Next = new ReadyCaptureEnergyStage(battlerInfomation.Length);
+                
             }
             
             void Regulus.Game.IStage.Enter()
@@ -58,17 +56,15 @@ namespace Regulus.Project.Crystal.Battle
                 {
                     if (_ReadyEvent != null)
                     {
+                        List<Player> players = new List<Player>();
                         foreach (var ri in _ReadyInfomations)
                         {
-                            Player plr = new Player();
-
-                            // TODO 初始化player 
-
-                            ri.ReadyCaptureEnergy.SetValue(plr);
-                            _Next.AddPlayer(plr);
+                            var player = new Player(ri.Pet);
+                            ri.ReadyCaptureEnergy.SetValue(player);
+                            players.Add(player);
                         }
 
-                        _ReadyEvent(_Next);
+                        _ReadyEvent(new ReadyCaptureEnergyStage(players.ToArray() , new ChipLibrary() , 10));
                     }
                     _ReadyEvent = null;
                 }
@@ -87,9 +83,9 @@ namespace Regulus.Project.Crystal.Battle
                 
             }
 
-            Regulus.Remoting.Value<IReadyCaptureEnergy> IBattleAdmissionTickets.Visit(Pet pet)
+            Regulus.Remoting.Value<IBattleStage> IBattleAdmissionTickets.Visit(Pet pet)
             {
-                Regulus.Remoting.Value<IReadyCaptureEnergy> rce = new Remoting.Value<IReadyCaptureEnergy>();
+                Regulus.Remoting.Value<IBattleStage> rce = new Remoting.Value<IBattleStage>();
                 ReadyInfomation ri = (from readyInfomation in _ReadyInfomations where readyInfomation.Battler.Id == pet.Owner && readyInfomation.Pet == null select readyInfomation).FirstOrDefault();
                 if (ri != null)
                 {                                     
@@ -100,43 +96,6 @@ namespace Regulus.Project.Crystal.Battle
                 return rce;
             }
         }
-
-
-        public class ReadyCaptureEnergyStage : Regulus.Game.IStage
-        {
-            private ChipLibrary _ChipLibrary;
-            private List<Player> _Players;
-
-            public ReadyCaptureEnergyStage(int player_count)
-            {
-                _ChipLibrary = new ChipLibrary(new Chip[]{}) ;
-                
-                _Players = new List<Player>();
-            }
-
-            void Regulus.Game.IStage.Enter()
-            {
-                foreach(var player in _Players)
-                {
-                    
-                }
-            }
-
-            void Regulus.Game.IStage.Leave()
-            {
-                
-            }
-
-            void Regulus.Game.IStage.Update()
-            {
-                
-            }
-
-            internal void AddPlayer(Player plr)
-            {
-                
-                _Players.Add(plr);
-            }
-        }
+        
     }
 }

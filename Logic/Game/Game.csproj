@@ -52,7 +52,14 @@
     </Compile>
     <Compile Include="Adventure.cs" />
     <Compile Include="Battle.cs" />
-    <Compile Include="BattleFieldStage.cs" />
+    <Compile Include="BattleField.cs" />
+    <Compile Include="BattleFieldCaptureEnergyStage.cs" />
+    <Compile Include="BattleFieldEnableChipStage.cs" />
+    <Compile Include="BattleFieldKillingStage.cs" />
+    <Compile Include="BattleFieldReadyCaptureEnergyStage.cs" />
+    <Compile Include="BattleFieldWaittingConnectStage.cs" />
+    <Compile Include="BattlePlayer.cs" />
+    <Compile Include="BattleZone.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Map.cs" />

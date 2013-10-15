@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Photon3Unity3D">
-      <HintPath>..\..\..\Library\ThirdParty\Photon\Photon3Unity3D.dll</HintPath>
+      <HintPath>..\..\..\Regulus\Library\ThirdParty\Photon\Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="Remoting, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

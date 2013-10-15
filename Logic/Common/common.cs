@@ -40,15 +40,40 @@ namespace Regulus.Project.Crystal
         T QueryAttrib<T>();
     }
 
-    
     public interface IBattleAdmissionTickets
     {
-        Value<IReadyCaptureEnergy> Visit(Pet pet);        
+        Value<IBattleStage> Visit(Pet pet);
+    }
+
+    public interface IBattleStage
+    {
+        event Action<IReadyCaptureEnergy> ReadyCaptureEnergyEvent;
+        event Action<ICaptureEnergy> CaptureEnergyEvent;
+        event Action<IEnableChip> EnableChipEvent;
+        event Action<IDrawChip> DrawChipEvent;
     }
 
     public interface IReadyCaptureEnergy
     {
         void UseChip(int[] chip_indexs);
+        event Action<Regulus.Project.Crystal.Battle.Chip[]> UsedChipEvent;
+    }
+    
+    public interface ICaptureEnergy
+    {
+        Value<bool> Capture(int idx);
+
+    }
+    
+
+    public interface IEnableChip
+    {
+        void Enable(int index);
+    }
+    
+    public interface IDrawChip
+    {
+        void Draw(int index);
     }
     
 

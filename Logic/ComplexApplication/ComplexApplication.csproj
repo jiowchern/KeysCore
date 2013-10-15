@@ -35,16 +35,16 @@
       <HintPath>..\..\Library\Regulus\Database.dll</HintPath>
     </Reference>
     <Reference Include="ExitGames.Logging.Log4Net">
-      <HintPath>..\..\..\Library\ThirdParty\Photon\ExitGames.Logging.Log4Net.dll</HintPath>
+      <HintPath>..\..\..\Regulus\Library\ThirdParty\Photon\ExitGames.Logging.Log4Net.dll</HintPath>
     </Reference>
     <Reference Include="ExitGamesLibs">
-      <HintPath>..\..\..\Library\ThirdParty\Photon\ExitGamesLibs.dll</HintPath>
+      <HintPath>..\..\..\Regulus\Library\ThirdParty\Photon\ExitGamesLibs.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\..\..\Library\ThirdParty\Photon\log4net.dll</HintPath>
+      <HintPath>..\..\..\Regulus\Library\ThirdParty\Photon\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Photon.SocketServer">
-      <HintPath>..\..\..\Library\ThirdParty\Photon\Photon.SocketServer.dll</HintPath>
+      <HintPath>..\..\..\Regulus\Library\ThirdParty\Photon\Photon.SocketServer.dll</HintPath>
     </Reference>
     <Reference Include="PhotonHostRuntimeInterfaces">
       <HintPath>..\..\Library\ThirdParty\Photon\PhotonHostRuntimeInterfaces.dll</HintPath>
