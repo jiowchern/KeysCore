@@ -9,18 +9,26 @@ namespace Regulus.Project.Crystal.Battle
     {
         public class CaptureEnergyStage : Regulus.Game.IStage
         {
-            class Capturer : ICaptureEnergy
+            public class Capturer : ICaptureEnergy
             {
                 public Player Player;
                 public event Func<Player, int, bool> CaptureEvent;
-
-                public Capturer(Player player)
+                int _Difficulty;
+                public bool Done { get; private set; }
+                public Capturer(Player player, int difficulty)
                 {
+                    _Difficulty = difficulty;
                     Player = player;
                 }
+
                 Remoting.Value<bool> ICaptureEnergy.Capture(int idx)
                 {
-                    return CaptureEvent(Player, idx);
+                    if (Done == false && CaptureEvent(Player, idx))
+                    {
+                        Done = true;
+                        return true;
+                    }
+                    return false;
                 }
             }
 
@@ -33,21 +41,13 @@ namespace Regulus.Project.Crystal.Battle
 
             EnergyGroup[] _Groups;
 
-            Queue<Capturer> _Capturers;
-            public CaptureEnergyStage(List<Player> players, ChipLibrary chiplibrary, int roundcount)
+            List<Capturer> _Capturers;
+            public CaptureEnergyStage(List<Capturer> capturers, ChipLibrary chiplibrary, int roundcount)
             {
-                var captures = new List<Capturer>();
-                foreach(var player in players )
-                {
-                    var capture = new Capturer(player);
-                    
-                    captures.Add(capture);
-                }
-
-                _Capturers = new Queue<Capturer>(captures);             
+                _Capturers = capturers;             
                 this._ChipLibrary = chiplibrary;
                 this._RoundCount = roundcount;
-                _Groups = new EnergyGroup[players.Count + 1];
+                _Groups = new EnergyGroup[_Capturers.Count + 1];
             }
 
             bool _OnCapture(Player player, int idx)
@@ -64,15 +64,27 @@ namespace Regulus.Project.Crystal.Battle
                 for (int i = 0; i < _Groups.Length; ++i )
                 {
                     var energy = new Energy(3);
-                    Action[] incs = 
+                    var eg = new EnergyGroup() { Energy = energy, Round = Regulus.Utility.Random.Next(0, 3) } ;
+                    Action[] incs1 = 
                     {
-                        energy.IncGreen , energy.IncRed , energy.IncYellow , energy.IncPower
+                        energy.IncGreen , energy.IncRed , energy.IncYellow 
                     };
-                    incs[Regulus.Utility.Random.Next(0, 3)]();
-                    incs[Regulus.Utility.Random.Next(0, 3)]();
-                    incs[Regulus.Utility.Random.Next(0, 3)]();
+                    incs1[Regulus.Utility.Random.Next(0, incs1.Length)]();
+                    incs1[Regulus.Utility.Random.Next(0, incs1.Length)]();
 
-                    _Groups[i] = new EnergyGroup() { Energy = energy, Round = Regulus.Utility.Random.Next(0, 3) };                    
+                    Action[] incs2 = 
+                    {
+                        energy.IncPower , ()=>{eg.Hp = 1;} , ()=>{eg.Change = 1;}
+                    };
+
+                    incs1[Regulus.Utility.Random.Next(0, incs2.Length)]();
+                    _Groups[i] = eg ;
+                }
+
+                foreach (var capture in _Capturers)
+                {
+                    capture.Player.OnSpawnCaptureEnergy(capture);                    
+                    capture.CaptureEvent += _OnCapture;
                 }
 
                 _Timeout = new Utility.TimeCounter();
@@ -82,42 +94,20 @@ namespace Regulus.Project.Crystal.Battle
 
             void Regulus.Game.IStage.Leave()
             {
-                
+                foreach (var capture in _Capturers)
+                {
+                    capture.CaptureEvent -= _OnCapture;
+                    capture.Player.OnUnspawnCaptureEnergy();                    
+                }
             }
 
 
-            Capturer _CurrentCapturer;
-            Regulus.Utility.TimeCounter _CurrentTimeout;
+            
+            
             void Regulus.Game.IStage.Update()
-            {
-                if (_Capturers.Count > 0)
-                {
-                    if (_CurrentCapturer == null)
-                    {
-                        _CurrentCapturer = _Capturers.Dequeue();
-
-                        _CurrentCapturer.Player.OnCaptureEnergy(_CurrentCapturer);
-
-                        _CurrentCapturer.CaptureEvent += _OnCapture;
-                        _CurrentTimeout = new Utility.TimeCounter();
-
-                    }
-                    var current = new System.TimeSpan(_CurrentTimeout.Ticks);
-                    if (current.TotalSeconds > 60)
-                    {
-                        _CurrentCapturer.CaptureEvent -= _OnCapture;
-                        _CurrentCapturer = null;
-                    }
-                }
-                else
-                {
-                    _ToNext();
-                }
-                
-
-
+            {                
                 var couuent = new System.TimeSpan(_Timeout.Ticks);
-                if (couuent.TotalSeconds > 1000)
+                if (couuent.TotalSeconds > 1000 || (from d in _Capturers where d.Done == true select d).Count() == _Capturers.Count())
                 {
                     _ToNext();
                 }

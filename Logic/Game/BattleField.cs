@@ -5,12 +5,31 @@ using System.Text;
 
 namespace Regulus.Project.Crystal.Battle
 {
+    class Skill : Regulus.Utility.Singleton<Skill>
+    {
+        public delegate void OnEffect();
+        Dictionary<int, OnEffect> _Skills;
+        public Skill()
+        {
+            _Skills = new Dictionary<int, OnEffect>();            
+        }
+
+        public void SetSkill(int id, OnEffect effect)
+        {
+            _Skills.Add(id, effect);
+        }
+
+        public void Use(int id)
+        {
+            _Skills[id]();
+        }
+    }
     partial class Field : Regulus.Game.IFramework
     {
         public class ChipLibrary
         {
             Queue<Chip> _Chips;
-
+                            
             public int Count { get { return _Chips.Count; } }
             public ChipLibrary()
                 : this(new Chip[] { })
@@ -57,11 +76,12 @@ namespace Regulus.Project.Crystal.Battle
 
         public delegate void OnFirst(WaittingConnectStage wcs);
         public OnFirst FirstEvent;
+        BattlerInfomation[] _BattlerInfomation;
         public Field(BattlerInfomation[] battlerInfomation)
         {
             Id = Guid.NewGuid();
             _Machine = new Regulus.Game.StageMachine();
-            FirstEvent(_Begin(battlerInfomation));
+            _BattlerInfomation = battlerInfomation;            
         }
         public Guid Id { get; private set; }
         Regulus.Game.StageMachine _Machine;
@@ -105,11 +125,9 @@ namespace Regulus.Project.Crystal.Battle
             EndEvent();
         }
 
-        
-
         void Regulus.Game.IFramework.Launch()
         {
-
+            FirstEvent(_Begin(_BattlerInfomation));
         }
 
         void Regulus.Game.IFramework.Shutdown()

@@ -13,9 +13,23 @@ namespace Regulus.Project.Crystal.Battle
 
         public Pet Pet { get; set; }
     }
+
+
+    [Serializable]
     public class Chip
     {
-
+        public Chip()
+        {
+            Passives = new int[0];
+            Initiatives = new int[0];
+        }
+        public int Id;
+        public int Type; // 0 == common
+        public int Red;
+        public int Yellow;
+        public int Green;
+        public int[] Passives;
+        public int[] Initiatives;
     };
 
     public interface IZone
@@ -31,8 +45,6 @@ namespace Regulus.Project.Crystal.Battle
 namespace Regulus.Project.Crystal.Game.Stage
 {
     class Battle : Regulus.Game.IStage 
-        
-
     {
 
         public delegate void OnEnd();
@@ -68,68 +80,44 @@ namespace Regulus.Project.Crystal.Game.Stage
 
         void _OnStart(IBattleStage battle_stage)
         {
-            battle_stage.ReadyCaptureEnergyEvent += _OnReadyCaptureEnergy;
-            battle_stage.CaptureEnergyEvent += _OnCaptureEnergy;
-            battle_stage.DrawChipEvent += _OnDrawChip;
-            battle_stage.EnableChipEvent += _OnEnableChip;
-        }
-
-        
-
-        
-        IReadyCaptureEnergy _ReadyCaptureEnergy;
-        ICaptureEnergy _CaptureEnergy;
-        IEnableChip _EnableChip;
-        IDrawChip  _DrawChip;
-        void _OnReadyCaptureEnergy(IReadyCaptureEnergy obj)
-        {
-            _ReadyCaptureEnergy = obj;
-            _ReadyCaptureEnergy.UsedChipEvent += (chips) => 
+            battle_stage.SpawnReadyCaptureEnergyEvent += (obj) =>
             {
-                _Binder.Unbind<IReadyCaptureEnergy>(_ReadyCaptureEnergy);
+                _Binder.Bind<IReadyCaptureEnergy>(obj);
+                battle_stage.UnspawnCaptureEnergyEvent += () =>
+                {
+                    _Binder.Unbind<IReadyCaptureEnergy>(obj);
+                };
             };
-
-            _Binder.Bind<IReadyCaptureEnergy>(_ReadyCaptureEnergy);
-            _Binder.Unbind<ICaptureEnergy>(_CaptureEnergy);
-            _Binder.Unbind<IEnableChip>(_EnableChip);
-            _Binder.Unbind<IDrawChip>(_DrawChip);
-        }
-
-        void _OnCaptureEnergy(ICaptureEnergy obj)
-        {
-            _CaptureEnergy = obj;
-
-            _Binder.Unbind<IReadyCaptureEnergy>(_ReadyCaptureEnergy);
-            _Binder.Bind<ICaptureEnergy>(_CaptureEnergy);
-            _Binder.Unbind<IEnableChip>(_EnableChip);
-            _Binder.Unbind<IDrawChip>(_DrawChip);
-        }
-        void _OnDrawChip(IDrawChip obj)
-        {
-            _DrawChip = obj;
-
-            _Binder.Unbind<IReadyCaptureEnergy>(_ReadyCaptureEnergy);
-            _Binder.Unbind<ICaptureEnergy>(_CaptureEnergy);
-            _Binder.Unbind<IEnableChip>(_EnableChip);
-            _Binder.Bind<IDrawChip>(_DrawChip);
-        }
-        void _OnEnableChip(IEnableChip obj)
-        {
-            _EnableChip = obj;
-
-            _Binder.Unbind<IReadyCaptureEnergy>(_ReadyCaptureEnergy);
-            _Binder.Unbind<ICaptureEnergy>(_CaptureEnergy);
-            _Binder.Bind<IEnableChip>(_EnableChip);
-            _Binder.Unbind<IDrawChip>(_DrawChip);
+            battle_stage.SpawnCaptureEnergyEvent += (obj) =>
+            {
+                _Binder.Bind<ICaptureEnergy>(obj);
+                battle_stage.UnspawnCaptureEnergyEvent += () =>
+                {
+                    _Binder.Unbind<ICaptureEnergy>(obj);
+                };
+            };
+            battle_stage.SpawnDrawChipEvent += (obj) =>
+            {
+                _Binder.Bind<IDrawChip>(obj);
+                battle_stage.UnspawnCaptureEnergyEvent += () =>
+                {
+                    _Binder.Unbind<IDrawChip>(obj);
+                };
+            };
+            battle_stage.SpawnEnableChipEvent += (obj) =>
+            {
+                _Binder.Bind<IEnableChip>(obj);
+                battle_stage.UnspawnCaptureEnergyEvent += () =>
+                {
+                    _Binder.Unbind<IEnableChip>(obj);
+                };
+            };
         }
         
 
         void Regulus.Game.IStage.Leave()
         {
-            _Binder.Unbind<IReadyCaptureEnergy>(_ReadyCaptureEnergy);
-            _Binder.Unbind<ICaptureEnergy>(_CaptureEnergy);
-            _Binder.Unbind<IEnableChip>(_EnableChip);
-            _Binder.Unbind<IDrawChip>(_DrawChip);
+        
         }
 
         void Regulus.Game.IStage.Update()

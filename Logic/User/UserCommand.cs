@@ -27,6 +27,46 @@ namespace Regulus.Project.Crystal
 
             _System.AdventureProvider.Supply += _OnAdventureSupply;
             _System.AdventureProvider.Unsupply += _Unsupply;
+
+            _System.BattleReadyCaptureEnergyProvider.Supply += _OnBattleReadyCaptureEnergySupply;
+            _System.BattleReadyCaptureEnergyProvider.Unsupply += _Unsupply;
+
+            _System.BattleCaptureEnergyProvider.Supply += _OnBattleCaptureEnergyProviderSupply;
+            _System.BattleCaptureEnergyProvider.Unsupply += _Unsupply;
+
+            
+        }
+
+        private void _OnBattleCaptureEnergyProviderSupply(ICaptureEnergy obj)
+        {
+            
+        }
+
+        
+
+        private void _OnBattleReadyCaptureEnergySupply(IReadyCaptureEnergy readycaptureenergy)
+        {
+            _Command.Register<string>("UseCard", (param) =>
+            {
+                var indexs = param.Split(',');
+                int[] idxs = (from index in indexs select int.Parse(index)).ToArray();
+                readycaptureenergy.UseChip(idxs);
+            });
+            readycaptureenergy.UsedChipEvent += _OnUseChipResult;
+
+            _Commands.Add( readycaptureenergy , new string[] 
+            {
+                "UseCard" 
+            });
+        }
+
+        void _OnUseChipResult(Battle.Chip[] chips)
+        {
+            foreach(var chip in chips)
+            {
+                _View.WriteLine("使用了卡片.");
+            }
+            
         }
 
         private void _OnAdventureSupply(IAdventure adventure)

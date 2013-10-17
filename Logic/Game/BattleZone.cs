@@ -8,7 +8,7 @@ namespace Regulus.Project.Crystal.Battle
     public class Zone : IZone , Regulus.Game.IFramework
     {
         Regulus.Game.FrameworkRoot _Fields;
-
+        
         public Zone()
         {
             _Fields = new Regulus.Game.FrameworkRoot();

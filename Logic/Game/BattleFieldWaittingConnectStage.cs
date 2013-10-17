@@ -56,6 +56,7 @@ namespace Regulus.Project.Crystal.Battle
                 {
                     if (_ReadyEvent != null)
                     {
+                        var cl = _GenerateCommonChipSet();
                         List<Player> players = new List<Player>();
                         foreach (var ri in _ReadyInfomations)
                         {
@@ -64,7 +65,7 @@ namespace Regulus.Project.Crystal.Battle
                             players.Add(player);
                         }
 
-                        _ReadyEvent(new ReadyCaptureEnergyStage(players.ToArray() , new ChipLibrary() , 10));
+                        _ReadyEvent(new ReadyCaptureEnergyStage(players.ToArray(), cl , 10));
                     }
                     _ReadyEvent = null;
                 }
@@ -81,6 +82,19 @@ namespace Regulus.Project.Crystal.Battle
                     }
                 }
                 
+            }
+
+            private ChipLibrary _GenerateCommonChipSet()
+            {                
+                Chip[] chips = new Chip[] { new Chip() { Id = 1, Yellow = 2, Initiatives = new int[] { 1 }, Passives = new int[] { 2 } }, new Chip() { Id = 2, Red = 1, Initiatives = new int[] { 3 }, Passives = new int[] { 4 } } };
+                ChipLibrary cl = new ChipLibrary();
+                for (int i = 0; i < 500; ++i )
+                {
+                    cl.Push(chips[0]);
+                    cl.Push(chips[1]);
+                }
+                cl.Shuffle();
+                return cl;
             }
 
             Regulus.Remoting.Value<IBattleStage> IBattleAdmissionTickets.Visit(Pet pet)

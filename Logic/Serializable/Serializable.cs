@@ -80,6 +80,8 @@ namespace Regulus.Project.Crystal
     public class EnergyGroup
     {
         public Energy Energy;
+        public int Hp;
+        public int Change;
         public int Round;
         public Guid Owner;
     }

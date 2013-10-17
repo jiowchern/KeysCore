@@ -17,8 +17,7 @@ namespace Regulus.Project.Crystal.Battle
             private int _RoundCount;
 
             public EnableChipStage(List<Player> players, ChipLibrary chiplibrary, int roundcount)
-            {
-                // TODO: Complete member initialization
+            {                
                 this._Players = players;
                 this._ChipLibrary = chiplibrary;
                 this._RoundCount = roundcount;
@@ -26,7 +25,7 @@ namespace Regulus.Project.Crystal.Battle
 
             void Regulus.Game.IStage.Enter()
             {
-                
+                _Timeout = new Utility.TimeCounter();
             }
 
             void Regulus.Game.IStage.Leave()

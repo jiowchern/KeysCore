@@ -11,7 +11,12 @@ namespace Regulus.Project.Crystal
 		Regulus.Remoting.Ghost.IProviderNotice<IVerify> VerifyProvider { get ; }
         Regulus.Remoting.Ghost.IProviderNotice<IUserStatus> StatusProvider { get; }
         Regulus.Remoting.Ghost.IProviderNotice<IParking> ParkingProvider { get; }	
-        Regulus.Remoting.Ghost.IProviderNotice<IAdventure> AdventureProvider { get; }	
+        Regulus.Remoting.Ghost.IProviderNotice<IAdventure> AdventureProvider { get; }
+
+        Regulus.Remoting.Ghost.IProviderNotice<IReadyCaptureEnergy> BattleReadyCaptureEnergyProvider { get; }
+        Regulus.Remoting.Ghost.IProviderNotice<ICaptureEnergy> BattleCaptureEnergyProvider { get; }
+        Regulus.Remoting.Ghost.IProviderNotice<IEnableChip> BattleEnableChipProvider { get; }
+        Regulus.Remoting.Ghost.IProviderNotice<IDrawChip> BattleDrawChipProvider { get; }	
 	    
         
 	}

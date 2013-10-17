@@ -50,6 +50,30 @@ namespace Regulus.Project.Crystal.Remoting
         {
             get { throw new NotImplementedException(); }
         }
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IReadyCaptureEnergy> IUser.BattleReadyCaptureEnergyProvider
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        Regulus.Remoting.Ghost.IProviderNotice<ICaptureEnergy> IUser.BattleCaptureEnergyProvider
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IEnableChip> IUser.BattleEnableChipProvider
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        Regulus.Remoting.Ghost.IProviderNotice<IDrawChip> IUser.BattleDrawChipProvider
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }
 

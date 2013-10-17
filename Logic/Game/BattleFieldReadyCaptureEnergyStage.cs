@@ -13,7 +13,7 @@ namespace Regulus.Project.Crystal.Battle
             int _RoundCount;
             private ChipLibrary _ChipLibrary;
             private List<Player> _Players;
-            class Decided
+            class Decided : IReadyCaptureEnergy
             {
                 public Player Owner;
                 public int ChipCount;
@@ -24,6 +24,24 @@ namespace Regulus.Project.Crystal.Battle
                 }
                 public bool IsDecided;
 
+                public event Action<Chip[]> UsedChipEvent;
+
+                void IReadyCaptureEnergy.UseChip(int[] chip_indexs)
+                {
+                    if (IsDecided == false)
+                    {
+                        var chips = Owner.UseChip(chip_indexs);
+                        OnChips(chips);
+                        _UsedChipEvent(chips);
+                    }                    
+                }
+
+                event Action<Chip[]> _UsedChipEvent;
+                event Action<Chip[]> IReadyCaptureEnergy.UsedChipEvent
+                {
+                    add { _UsedChipEvent += value; }
+                    remove { _UsedChipEvent -= value; }
+                }
             }
             List<Decided> _Decideds;
 
@@ -40,12 +58,15 @@ namespace Regulus.Project.Crystal.Battle
 
             void Regulus.Game.IStage.Enter()
             {
+                _Timeout = new Utility.TimeCounter();
                 _Decideds = new List<Decided>();
                 foreach(var player in _Players)
                 {
-                    player.OnReadyCaptureEnergy();
+                    player.Initial(_ChipLibrary);
+                    
                     var decided = new Decided() { Owner = player };                    
-                    decided.Owner.UsedChipEvent += decided.OnChips;                    
+                    
+                    player.OnSpawnReadyCaptureEnergy(decided);
                     _Decideds.Add(decided);
                 }
             }
@@ -54,7 +75,7 @@ namespace Regulus.Project.Crystal.Battle
             {
                 foreach (var decided in _Decideds)
                 {
-                    decided.Owner.UsedChipEvent -= decided.OnChips;
+                    
                 }
             }
 
@@ -65,8 +86,9 @@ namespace Regulus.Project.Crystal.Battle
                 {
                     if (TimeOutEvent != null)
                     {
-                        var players = from d in _Decideds orderby d.ChipCount, d.Owner.Speed select d.Owner;
-                        TimeOutEvent(new CaptureEnergyStage(players.ToList(), _ChipLibrary, _RoundCount));
+                        var captuters = from player in _Decideds select new CaptureEnergyStage.Capturer(player.Owner, Player.UsedCardCount - player.ChipCount);
+
+                        TimeOutEvent(new CaptureEnergyStage(captuters.ToList(), _ChipLibrary, _RoundCount));
                     }
                     TimeOutEvent = null;
                 }

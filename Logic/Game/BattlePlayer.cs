@@ -9,13 +9,10 @@ namespace Regulus.Project.Crystal.Battle
     public partial class Field : Regulus.Game.IFramework
     {
 
-        public class Player : IBattleStage
-            , IReadyCaptureEnergy
-            
-            , IEnableChip
-            , IDrawChip
+        public class Player : IBattleStage            
         {
             public int Hp { get; private set; }
+            public const int UsedCardCount = 3;
             public const int EnableChipCount = 5;
             public BattlerSide Side;
             public Pet Pet;
@@ -27,10 +24,10 @@ namespace Regulus.Project.Crystal.Battle
             public Chip[] StandbyChip;
             public List<Chip> EnableChips;
             public ChipLibrary RecycleChip;
-
-            public event Action<Chip[]> UsedChipEvent;
+            
             public Player()
-            {                
+            {
+                
                 Hp = 100;
             }
 
@@ -38,16 +35,36 @@ namespace Regulus.Project.Crystal.Battle
             {                
                 this.Pet = pet;
             }
-            
-            
+
+            internal void Initial(ChipLibrary chiplibrary)
+            {
+                EnableChips = new List<Chip>();
+                RecycleChip = new ChipLibrary();
+                StandbyChip = new Chip[5];
+                SourceChip = new ChipLibrary();   
+
+                for (int i = 0; i < 10; ++i )
+                {
+                    SourceChip.Push(chiplibrary.Pop());
+                }
+                SourceChip.Shuffle();
+                Licensing();
+            }
+
+            internal void Licensing()
+            {
+                _InsertStandby(_Supplementary(StandbyChip.Length));
+            }
+
+            public Chip[] UseChip(int[] chip_indexs)
+            {
+                return _UseChip(chip_indexs);
+            }
             Chip[] _UseChip(int[] chip_indexs)
             {
                 var usedChips = _EnableChips(chip_indexs);
-                
                 Queue<Chip> chips = _Supplementary(usedChips.Length);
                 _InsertStandby(chips);
-
-                UsedChipEvent(usedChips);
                 return usedChips;
             }
 
@@ -101,62 +118,65 @@ namespace Regulus.Project.Crystal.Battle
                 return chips;
             }
 
-            internal void OnCaptureEnergy(ICaptureEnergy capturer)
-            {
-                _CaptureEnergyEvent(capturer);
-            }
-
-            internal void OnReadyCaptureEnergy()
-            {
-                _ReadyCaptureEnergyEvent(this);
-            }
-
-            event Action<IReadyCaptureEnergy> _ReadyCaptureEnergyEvent;
-            event Action<IReadyCaptureEnergy> IBattleStage.ReadyCaptureEnergyEvent
-            {
-                add { _ReadyCaptureEnergyEvent += value; }
-                remove { _ReadyCaptureEnergyEvent -= value; }
-            }
-
-            event Action<ICaptureEnergy> _CaptureEnergyEvent;
-            event Action<ICaptureEnergy> IBattleStage.CaptureEnergyEvent
-            {
-                add { _CaptureEnergyEvent += value; }
-                remove { _CaptureEnergyEvent -= value; }
-            }
-
-            event Action<IEnableChip> _EnableChipEvent;
-            event Action<IEnableChip> IBattleStage.EnableChipEvent
-            {
-                add { _EnableChipEvent += value; }
-                remove { _EnableChipEvent -= value; }
-            }
-
-            event Action<IDrawChip> _DrawChipEvent;
-            event Action<IDrawChip> IBattleStage.DrawChipEvent
-            {
-                add { _DrawChipEvent += value; }
-                remove { _DrawChipEvent -= value; }
-            }
-
-            void IReadyCaptureEnergy.UseChip(int[] chip_indexs)
-            {
-                _UseChip(chip_indexs);    
-            }
-
-            void IEnableChip.Enable(int index)
-            {
-                throw new NotImplementedException();
-            }
-
-            void IDrawChip.Draw(int index)
-            {
-                throw new NotImplementedException();
-            }
-
-
+            
 
             
+
+            public Action<IReadyCaptureEnergy> OnSpawnReadyCaptureEnergy;
+            event Action<IReadyCaptureEnergy> IBattleStage.SpawnReadyCaptureEnergyEvent
+            {
+                add { OnSpawnReadyCaptureEnergy += value; }
+                remove { OnSpawnReadyCaptureEnergy -= value; }
+            }
+
+            public Action<ICaptureEnergy> OnSpawnCaptureEnergy;
+            event Action<ICaptureEnergy> IBattleStage.SpawnCaptureEnergyEvent
+            {
+                add { OnSpawnCaptureEnergy += value; }
+                remove { OnSpawnCaptureEnergy -= value; }
+            }
+
+            public Action<IEnableChip> OnSpqwnEnableChip;
+            event Action<IEnableChip> IBattleStage.SpawnEnableChipEvent
+            {
+                add { OnSpqwnEnableChip += value; }
+                remove { OnSpqwnEnableChip -= value; }
+            }
+
+            public Action<IDrawChip> OnSpawnDrawChip;
+            event Action<IDrawChip> IBattleStage.SpawnDrawChipEvent
+            {
+                add { OnSpawnDrawChip += value; }
+                remove { OnSpawnDrawChip -= value; }
+            }
+
+            public  Action    OnUnspawnReadyCaptureEnergy;
+            event Action    IBattleStage.UnspawnReadyCaptureEnergyEvent
+            {
+                add { OnUnspawnReadyCaptureEnergy += value; }
+                remove { OnUnspawnReadyCaptureEnergy -= value; }
+            }
+
+            public  Action    OnUnspawnCaptureEnergy;
+            event Action    IBattleStage.UnspawnCaptureEnergyEvent
+            {
+                add { OnUnspawnCaptureEnergy += value; }
+                remove { OnUnspawnCaptureEnergy -= value; }
+            }
+
+            public Action OnUnspawnEnableChip;
+            event Action    IBattleStage.UnspawnEnableChipEvent
+            {
+                add { OnUnspawnEnableChip += value; }
+                remove { OnUnspawnEnableChip -= value; }
+            }
+
+            public Action OnUnspawnDrawChip;
+            event Action    IBattleStage.UnspawnDrawChipEvent
+            {
+                add { OnUnspawnDrawChip += value; }
+                remove { OnUnspawnDrawChip -= value; }
+            }
         }
     }
     

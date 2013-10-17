@@ -47,10 +47,15 @@ namespace Regulus.Project.Crystal
 
     public interface IBattleStage
     {
-        event Action<IReadyCaptureEnergy> ReadyCaptureEnergyEvent;
-        event Action<ICaptureEnergy> CaptureEnergyEvent;
-        event Action<IEnableChip> EnableChipEvent;
-        event Action<IDrawChip> DrawChipEvent;
+        event Action<IReadyCaptureEnergy> SpawnReadyCaptureEnergyEvent;
+        event Action<ICaptureEnergy> SpawnCaptureEnergyEvent;
+        event Action<IEnableChip> SpawnEnableChipEvent;
+        event Action<IDrawChip> SpawnDrawChipEvent;
+
+        event Action    UnspawnReadyCaptureEnergyEvent;
+        event Action    UnspawnCaptureEnergyEvent;
+        event Action    UnspawnEnableChipEvent;
+        event Action    UnspawnDrawChipEvent;
     }
 
     public interface IReadyCaptureEnergy
@@ -62,7 +67,6 @@ namespace Regulus.Project.Crystal
     public interface ICaptureEnergy
     {
         Value<bool> Capture(int idx);
-
     }
     
 
@@ -73,6 +77,7 @@ namespace Regulus.Project.Crystal
     
     public interface IDrawChip
     {
+
         void Draw(int index);
     }
     

@@ -64,6 +64,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Serializable\Serializable.csproj">
+      <Project>{4868ea9e-ecfd-462c-b053-dfc4b7e4785c}</Project>
+      <Name>Serializable</Name>
+    </ProjectReference>
     <ProjectReference Include="..\User\User.csproj">
       <Project>{8232ee74-c1f1-49a4-94d7-d67de577050b}</Project>
       <Name>User %28Projects\Crystal\User%29</Name>
