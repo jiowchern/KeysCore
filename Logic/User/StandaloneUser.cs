@@ -99,17 +99,14 @@ namespace Regulus.Project.Crystal.Standalone
             get { return _Agent.QueryProvider<ICaptureEnergy>(); }
         }
 
-
-
-
         Regulus.Remoting.Ghost.IProviderNotice<IEnableChip> IUser.BattleEnableChipProvider
         {
-            get { throw new NotImplementedException(); }
+            get { return _Agent.QueryProvider<IEnableChip>(); }
         }
 
         Regulus.Remoting.Ghost.IProviderNotice<IDrawChip> IUser.BattleDrawChipProvider
         {
-            get { throw new NotImplementedException(); }
+            get { return _Agent.QueryProvider<IDrawChip>(); }
         }
     }
 }

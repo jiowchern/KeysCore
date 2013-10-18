@@ -20,9 +20,13 @@ namespace Regulus.Project.Crystal.Battle
             public int Attack;
             public int Defence;
             public int Speed;
+            // 未使用
             public ChipLibrary SourceChip;
+            // 手牌區
             public Chip[] StandbyChip;
+            // 啟用區
             public List<Chip> EnableChips;
+            // 棄牌區
             public ChipLibrary RecycleChip;
             
             public Player()

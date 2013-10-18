@@ -117,7 +117,7 @@ namespace Regulus.Project.Crystal.Battle
             {
                 if (TimeOutEvent != null)
                 {
-                    TimeOutEvent(new EnableChipStage((from c in _Capturers select c.Player).ToList(), _ChipLibrary, _RoundCount));
+                    //TimeOutEvent(new EnableChipStage((from c in _Capturers select c.Player).ToList(), _ChipLibrary, _RoundCount));
                 }
                 TimeOutEvent = null;
             }

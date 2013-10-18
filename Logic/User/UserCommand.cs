@@ -34,12 +34,21 @@ namespace Regulus.Project.Crystal
             _System.BattleCaptureEnergyProvider.Supply += _OnBattleCaptureEnergyProviderSupply;
             _System.BattleCaptureEnergyProvider.Unsupply += _Unsupply;
 
+            _System.BattleDrawChipProvider.Supply += _OnBattleDrawChipSupply;
+            _System.BattleDrawChipProvider.Unsupply += _Unsupply;
+        }
+
+        void _OnBattleDrawChipSupply(IDrawChip obj)
+        {
             
         }
 
         private void _OnBattleCaptureEnergyProviderSupply(ICaptureEnergy obj)
         {
-            
+            _Command.RemotingRegister<int, bool>("Capture", obj.Capture, (success) => 
+            {
+                _View.WriteLine("奪能" + (success? "成功" : "失敗"));
+            });
         }
 
         
@@ -64,7 +73,7 @@ namespace Regulus.Project.Crystal
         {
             foreach(var chip in chips)
             {
-                _View.WriteLine("使用了卡片.");
+                _View.WriteLine("覆蓋了卡片 " + chip.Id);
             }
             
         }

@@ -68,8 +68,11 @@ namespace Regulus.Project.Crystal
     {
         Value<bool> Capture(int idx);
     }
-    
 
+    public interface IRemoveEnergy
+    { 
+
+    }
     public interface IEnableChip
     {
         void Enable(int index);
