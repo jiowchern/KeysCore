@@ -11,7 +11,7 @@ namespace Regulus.Project.Crystal.Battle
 
         public class Player : IBattleStage            
         {
-            public int Hp { get; private set; }
+            public int Hp { get; set; }
             public const int UsedCardCount = 3;
             public const int EnableChipCount = 5;
             public BattlerSide Side;
@@ -25,7 +25,7 @@ namespace Regulus.Project.Crystal.Battle
             // 手牌區
             public Chip[] StandbyChip;
             // 啟用區
-            public List<Chip> EnableChips;
+            public Chip[] EnableChips;
             // 棄牌區
             public ChipLibrary RecycleChip;
             
@@ -42,7 +42,7 @@ namespace Regulus.Project.Crystal.Battle
 
             internal void Initial(ChipLibrary chiplibrary)
             {
-                EnableChips = new List<Chip>();
+                EnableChips = new Chip[EnableChipCount];
                 RecycleChip = new ChipLibrary();
                 StandbyChip = new Chip[5];
                 SourceChip = new ChipLibrary();   
@@ -87,7 +87,7 @@ namespace Regulus.Project.Crystal.Battle
             {
                 List<Chip> chips = new List<Chip>();
                 
-                if (EnableChips.Count < EnableChipCount)
+                if ( (from ec in EnableChips where ec == null select ec).Count() < EnableChipCount)
                 {
                     foreach (var index in chip_indexs)
                     {
@@ -95,9 +95,13 @@ namespace Regulus.Project.Crystal.Battle
                         {
                             var chip = StandbyChip[index];
                             StandbyChip[index] = null;
-                            EnableChips.Add(chip);
-                            chips.Add(chip);
-                
+
+                            for (int i = 0; i < EnableChips.Length; ++i)
+                            {
+                                if (EnableChips[i] == null)
+                                    EnableChips[i] = chip;
+                            }                                
+                            chips.Add(chip);                
                         }
                     }
                 }
@@ -140,11 +144,11 @@ namespace Regulus.Project.Crystal.Battle
                 remove { OnSpawnCaptureEnergy -= value; }
             }
 
-            public Action<IEnableChip> OnSpqwnEnableChip;
+            public Action<IEnableChip> OnSpawnEnableChip;
             event Action<IEnableChip> IBattleStage.SpawnEnableChipEvent
             {
-                add { OnSpqwnEnableChip += value; }
-                remove { OnSpqwnEnableChip -= value; }
+                add { OnSpawnEnableChip += value; }
+                remove { OnSpawnEnableChip -= value; }
             }
 
             public Action<IDrawChip> OnSpawnDrawChip;

@@ -76,6 +76,7 @@ namespace Regulus.Project.Crystal
     public interface IEnableChip
     {
         void Enable(int index);
+        void Done();
     }
     
     public interface IDrawChip

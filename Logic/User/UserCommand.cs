@@ -73,7 +73,7 @@ namespace Regulus.Project.Crystal
         {
             foreach(var chip in chips)
             {
-                _View.WriteLine("覆蓋了卡片 " + chip.Id);
+                _View.WriteLine("覆蓋了卡片 " + chip.Name);
             }
             
         }

@@ -9,117 +9,165 @@ namespace Regulus.Project.Crystal.Battle
     {
         public class EnableChipStage : Regulus.Game.IStage
         {
-            public class Battler 
+            public class Battler : IEnableChip
             {
-                interface ICommonStage : Regulus.Game.IStage 
-                {
-                    event Action DoneEvent;
-                }
-                class EnergyStage : ICommonStage, IRemoveEnergy
-                {
-
-                    event Action ICommonStage.DoneEvent
-                    {
-                        add { throw new NotImplementedException(); }
-                        remove { throw new NotImplementedException(); }
-                    }
-
-                    void Regulus.Game.IStage.Enter()
-                    {
-                        throw new NotImplementedException();
-                    }
-
-                    void Regulus.Game.IStage.Leave()
-                    {
-                        throw new NotImplementedException();
-                    }
-
-                    void Regulus.Game.IStage.Update()
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-                class EnableStage : ICommonStage , IEnableChip
-                {
-                    Player _Player;
-                    public delegate void OnDone();
-                    public event OnDone DoneEvent;
-
-                    void IEnableChip.Enable(int index)
-                    {
-                        
-                    }
-
-                    event Action ICommonStage.DoneEvent
-                    {
-                        add { throw new NotImplementedException(); }
-                        remove { throw new NotImplementedException(); }
-                    }
-
-                    void Regulus.Game.IStage.Enter()
-                    {
-                        throw new NotImplementedException();
-                    }
-
-                    void Regulus.Game.IStage.Leave()
-                    {
-                        throw new NotImplementedException();
-                    }
-
-                    void Regulus.Game.IStage.Update()
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-
-                Player _Player;
+                ChipLibrary _Common;
+                public Player Player { get; private set; }
                 int _Speed;
-                public int Speed { get { return _Speed + _Player.Speed;  } }
-                
-                Regulus.Game.StageMachine _Machine;
-                Queue<ICommonStage> _Stages;
+                int _Attack;
+                public int Speed { get { return _Speed + Player.Speed;  } }
+                Battler[] _Battlers;
                 public Battler(Player player)
                 {
-                    _Player = player;
-                    _Machine = new Regulus.Game.StageMachine();
-                    _Stages = new Queue<ICommonStage>();
-                }                
+                    Player = player;
+                    
+                }
 
-                internal void Initial(int speed)
+                internal void Initial(int speed, Battler[] battlers , ChipLibrary common)
                 {
                     _Speed = speed;
-                }
-                internal void OnStartEnergy()
-                {
-                    var e = new EnergyStage();
-                    _Stages.Enqueue(e);
-                }
-                internal void OnStartEnable()
-                {
-                    var e = new EnableStage();
-                    _Stages.Enqueue(e);
+                    _Battlers = battlers;
+                    _Common = common;
                 }
 
-                internal bool Update()
+                public bool Done { get 
                 {
-                    if (_Machine.Update() == false && _Stages.Count() > 0)
-                    {
-                        var stage = _Stages.Dequeue();
-                        stage.DoneEvent += () => 
-                        {
-                            _Machine.Push(null);
-                        };
-                        _Machine.Push(stage);
-                        return true;
-                    }
+                    if (_Time != null)
+                        return new System.TimeSpan(_Time.Ticks).TotalSeconds > 60 || _Done;
                     return false;
+                } }
+
+                Regulus.Utility.TimeCounter _Time;
+                internal void CloseEnable()
+                {
+                    Player.OnUnspawnEnableChip();
                 }
 
+                internal void OpenEnable()
+                {
+                    Player.OnSpawnEnableChip(this);
+                    _Time = new Utility.TimeCounter();
+                }
+
+                void IEnableChip.Enable(int index)
+                {
+                    if (index < Player.EnableChips.Length && Player.EnableChips[index] != null)
+                    {
+                        var chip = Player.EnableChips[index];
+                        Player.EnableChips[index] = null;
+                        int idx = _Battlers.Length / 2;
+                        if (Player.Energy.Consume(chip.Red[idx], chip.Yellow[idx], chip.Green[idx], chip.Power[idx]))
+                        {
+                            foreach (var effect in chip.Initiatives)
+                            {
+                                _ExecuteSpell(this, effect, _Battlers);
+                            }
+                        }
+                        Player.RecycleChip.Push(chip);
+                        Player.RecycleChip.Push(_GenerateChip());
+                    }
+                }
+
+                private Chip _GenerateChip()
+                {
+                    return _Common.Pop();                    
+                }
+
+                internal void StimulatePassive()
+                {
+                    foreach (var ec in Player.EnableChips)
+                    { 
+                        foreach(var effect in ec.Passives)
+                        {
+                            _ExecuteSpell(this , effect, _Battlers);
+                        }
+                    }
+                }
+
+                private static void _ExecuteSpell(Battler battler, int effect, Battler[] battlers)
+                {
+                    if (effect == 1)
+                    {
+                        if (battler.Player.Energy.Green == 0)
+                        {
+                            battler.AddAttack(6);
+                        }
+                    }
+                    if (effect == 2)
+                    {
+                        battler.Player.Hp += 3;
+                    }
+
+                    if (effect == 3)
+                    { 
+                        
+                        foreach(var target in battlers)
+                        {
+                            if (target.Side != battler.Side)
+                            {
+                                int damage = battler.Attack + 10;
+                                target.SubGreen();
+                                target.SubGreen();
+                                target.Injuries(damage);
+                            }
+                            
+                        }
+                    }
+                    if (effect == 4)
+                    {
+                        battler.TurnonProtection();
+                        battler.IncRed();
+                    }
+                }
+                int _Protection = 1;
+                private void TurnonProtection()
+                {
+                    _Protection = 2;
+                }
+                private void TurnoffProtection()
+                {
+                    _Protection = 1;
+                }
+
+                private void Injuries(int damage)
+                {
+                    Player.Hp -= (damage / _Protection);
+                }
                 
+                private void IncRed()
+                {
+                    Player.Energy.IncRed();                    
+                }
+
+                private void SubGreen()
+                {
+                    Player.Energy.SubGreen();
+                }
+
+                private void AddAttack(int p)
+                {
+                    _Attack += p;
+                }
+
+
+
+                public BattlerSide Side { get { return Player.Side;  } }
+
+                public int Attack { get { return _Attack + Player.Attack; } }
+
+                public int Hp { get { return Player.Hp; } }
+
+
+                bool _Done;
+                void IEnableChip.Done()
+                {
+                    _Done = true;
+                }
             }
+
             public delegate void OnTimeOut(KillingStage stage);
             public event OnTimeOut TimeOutEvent;
-            Regulus.Utility.TimeCounter _Timeout;            
+           
             private ChipLibrary _ChipLibrary;
             private int _RoundCount;
             Battler[] _Battlers;
@@ -133,19 +181,19 @@ namespace Regulus.Project.Crystal.Battle
             }
 
             void Regulus.Game.IStage.Enter()
-            {
-                
+            {                
                 Queue<int> signs = new Queue<int>(_BuildSigns());
                 
                 foreach (var battler in _Battlers)
                 {
-                    battler.Initial(signs.Dequeue());
+                    battler.Initial(signs.Dequeue(), _Battlers , _ChipLibrary );
+                    battler.StimulatePassive();
                 }
-                _Battlers = (from battler in _Battlers orderby battler.Speed descending select battler).ToArray();
+                _Battlers = (from battler in _Battlers where battler.Hp > 0 orderby battler.Speed descending select battler).ToArray();
                 _Standby = new Queue<Battler>(_Battlers);
-                _Timeout = new Utility.TimeCounter();
 
-                
+                _Current = _NextBattler(_Standby);
+                _Current.OpenEnable();
             }
 
             private static int[] _BuildSigns()
@@ -170,27 +218,36 @@ namespace Regulus.Project.Crystal.Battle
 
             Battler _Current;
             void Regulus.Game.IStage.Update()
-            {                
-                if (_Current == null && _Standby.Count() > 0)
+            {
+                if (_Current.Done)
                 {
-                    _Current = _Standby.Dequeue();
+                    _Current.CloseEnable();
+                    var battler = _NextBattler(_Standby);
+                    if (battler != null)
+                    {
+                        battler.OpenEnable();
+                    }
                     
+                    _Current = battler;                    
                 }
-                
-                var couuent = new System.TimeSpan(_Timeout.Ticks);
-                if (couuent.TotalSeconds > 1000 || _Current == null)
+
+                if (_Current == null)
                 {
                     if (TimeOutEvent != null)
-                    {
-                        TimeOutEvent(new KillingStage(null, _ChipLibrary, _RoundCount));
-                    }
+                        TimeOutEvent(new KillingStage((from battler in _Battlers select battler.Player).ToArray() , _ChipLibrary , _RoundCount - 1 ) );
                     TimeOutEvent = null;
                 }
-                else if (_Current.Update())
+            }
+
+            private Battler _NextBattler(Queue<Battler> standby)
+            {
+                if (standby.Count > 0)
                 {
+                    var battler = standby.Dequeue();
                     
-                    _Current = null;
+                    return battler;
                 }
+                return null;
             }
         }
     }

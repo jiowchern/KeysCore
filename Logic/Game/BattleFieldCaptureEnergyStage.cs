@@ -21,6 +21,10 @@ namespace Regulus.Project.Crystal.Battle
                     Player = player;
                 }
 
+                public void Capture(int idx)
+                {
+                    CaptureEvent(Player, idx);
+                }
                 Remoting.Value<bool> ICaptureEnergy.Capture(int idx)
                 {
                     if (Done == false && CaptureEvent(Player, idx))
@@ -65,16 +69,16 @@ namespace Regulus.Project.Crystal.Battle
                 {
                     var energy = new Energy(3);
                     var eg = new EnergyGroup() { Energy = energy, Round = Regulus.Utility.Random.Next(0, 3) } ;
-                    Action[] incs1 = 
+                    Func<bool>[] incs1 = 
                     {
                         energy.IncGreen , energy.IncRed , energy.IncYellow 
                     };
                     incs1[Regulus.Utility.Random.Next(0, incs1.Length)]();
                     incs1[Regulus.Utility.Random.Next(0, incs1.Length)]();
 
-                    Action[] incs2 = 
+                    Func<bool>[] incs2 = 
                     {
-                        energy.IncPower , ()=>{eg.Hp = 1;} , ()=>{eg.Change = 1;}
+                        energy.IncPower , ()=>{eg.Hp = 1; return true;} , ()=>{eg.Change = 1; return true;}
                     };
 
                     incs1[Regulus.Utility.Random.Next(0, incs2.Length)]();
@@ -107,17 +111,34 @@ namespace Regulus.Project.Crystal.Battle
             void Regulus.Game.IStage.Update()
             {                
                 var couuent = new System.TimeSpan(_Timeout.Ticks);
-                if (couuent.TotalSeconds > 1000 || (from d in _Capturers where d.Done == true select d).Count() == _Capturers.Count())
+                if (couuent.TotalSeconds > 1000)
                 {
-                    _ToNext();
+                    for (int i = 0; i < _Groups.Length; ++i)
+                    {
+                        var group = _Groups[i];
+                        if (group != null)
+                        {
+                            foreach (var cap in _Capturers)
+                            {
+                                if (cap.Done == false)
+                                {
+                                    cap.Capture(i);
+                                }
+                            }
+                        }
+                    }
+                }
+                if((from d in _Capturers where d.Done == true select d).Count() == _Capturers.Count())
+                {                    
+                    _ToNext( (from g in _Groups where g != null select g.Round).FirstOrDefault() );
                 }
             }
 
-            private void _ToNext()
+            private void _ToNext(int release_round)
             {
                 if (TimeOutEvent != null)
                 {
-                    //TimeOutEvent(new EnableChipStage((from c in _Capturers select c.Player).ToList(), _ChipLibrary, _RoundCount));
+                    TimeOutEvent(new EnableChipStage((from c in _Capturers select new EnableChipStage.Battler(c.Player)).ToArray(), _ChipLibrary, _RoundCount - release_round));
                 }
                 TimeOutEvent = null;
             }

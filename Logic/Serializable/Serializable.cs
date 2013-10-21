@@ -103,31 +103,66 @@ namespace Regulus.Project.Crystal
         {
             return Red + Yellow + Green <= _TotalMax;
         }
-
-        public void IncRed()
+        public void SubGreen()
+        {
+            if (Green > 0)
+                Green--;
+        }
+        public void SubRed()
+        {
+            if (Red > 0)
+                Red--;
+        }
+        public void SubYellow()
+        {
+            if (Yellow > 0)
+                Yellow--;
+        }
+        public void SubPower()
+        {
+            if (Power > 0)
+                Power--;
+        }
+        public bool IncRed()
         {
             if (_CheckTotal())
+            {
                 Red++;
+                return true;
+            }
+            return false;
         }
 
-        public void IncYellow()
+        public bool IncYellow()
         {
             if (_CheckTotal())
+            {
                 Yellow++;
+                return true;
+            }
+            return false;
         }
-        public void IncGreen()
+        public bool IncGreen()
         {
             if (_CheckTotal())
+            {
                 Green++;
+                return true;
+            }
+            return false;
         }
 
-        public void IncPower()
+        public bool IncPower()
         {
             if (Power == 0)
+            {
                 Power++;
+                return true;
+            }
+            return false;
         }
 
-        public void Consume(int r, int y, int g, int p)
+        public bool Consume(int r, int y, int g, int p)
         {
             if (Check(r, y, g, p))
             {
@@ -135,7 +170,9 @@ namespace Regulus.Project.Crystal
                 Yellow -= y;
                 Green -= g;
                 Power -= p;
+                return true;
             }
+            return false;
         }
         public bool Check(int r, int y, int g, int p)
         {

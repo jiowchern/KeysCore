@@ -85,13 +85,33 @@ namespace Regulus.Project.Crystal.Battle
             }
 
             private ChipLibrary _GenerateCommonChipSet()
-            {                
-                Chip[] chips = new Chip[] { new Chip() { Id = 1, Yellow = 2, Initiatives = new int[] { 1 }, Passives = new int[] { 2 } }, new Chip() { Id = 2, Red = 1, Initiatives = new int[] { 3 }, Passives = new int[] { 4 } } };
+            {
+                // 築巢
+                Chip chip1 = new Chip();
+                chip1.Name = "築巢";
+                chip1.Red = new int[] { 0, 0, 0 };
+                chip1.Yellow = new int[] { 1, 1, 2 };
+                chip1.Green = new int[] { 0, 0, 0 };
+                chip1.Power = new int[] { 0, 0, 0 };
+                chip1.Initiatives = new int[] { 4 };
+                chip1.Passives = new int[] { 2 };
+
+                // 下風突襲
+                Chip chip2 = new Chip();
+                chip2.Name = "下風突襲";
+                chip2.Red = new int[] { 1, 1, 1 };
+                chip2.Yellow = new int[] { 0, 0, 0 };
+                chip2.Green = new int[] { 0, 0, 1 };
+                chip2.Power = new int[] { 0, 0, 0 };
+                chip2.Initiatives = new int[] { 3 };
+                chip2.Passives = new int[] { 1 };
+
+                
                 ChipLibrary cl = new ChipLibrary();
                 for (int i = 0; i < 500; ++i )
                 {
-                    cl.Push(chips[0]);
-                    cl.Push(chips[1]);
+                    cl.Push(chip2);
+                    cl.Push(chip1);
                 }
                 cl.Shuffle();
                 return cl;

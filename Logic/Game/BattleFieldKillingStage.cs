@@ -37,14 +37,24 @@ namespace Regulus.Project.Crystal.Battle
 
             void Regulus.Game.IStage.Update()
             {
-                if (_RoundCount == 0)
+                if (_RoundCount > 0)
                 {
                     var winnter = (from player in _Players orderby player.Hp descending select player.Side).FirstOrDefault();
                     EndEvent(winnter);
                 }
                 else
                 {
-                    ReadyCaptureEnergyStageEvent(new ReadyCaptureEnergyStage(_Players.ToArray(), _CommonChips, _RoundCount));
+                    var winnters = (from player in _Players group player by player.Side into side
+                                   let Hp = side.Sum((p) => { return p.Hp; })
+                                   orderby Hp ascending
+                                   select new { Side = side.Key, Hp = Hp }).ToArray();
+
+                    if (winnters[0].Hp == 0)
+                    {
+                        EndEvent(winnters[1].Side);
+                    }
+                    else
+                        ReadyCaptureEnergyStageEvent(new ReadyCaptureEnergyStage(_Players.ToArray(), _CommonChips, _RoundCount));
                 }
             }
         }

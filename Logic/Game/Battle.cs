@@ -22,12 +22,16 @@ namespace Regulus.Project.Crystal.Battle
         {
             Passives = new int[0];
             Initiatives = new int[0];
+            Red = new int[3];
+            Yellow = new int[3];
+            Green = new int[3];
+            Power = new int[3];
         }
-        public int Id;
-        public int Type; // 0 == common
-        public int Red;
-        public int Yellow;
-        public int Green;
+        public string Name;  
+        public int[] Red;
+        public int[] Yellow;
+        public int[] Green;
+        public int[] Power;
         public int[] Passives;
         public int[] Initiatives;
     };
