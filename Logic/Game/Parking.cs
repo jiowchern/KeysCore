@@ -40,9 +40,9 @@ namespace Regulus.Project.Crystal.Game.Stage
         }
         
 
-        Remoting.Value<ActorInfomation> IParking.SelectActor(Guid id)
+        Remoting.Value<ActorInfomation> IParking.SelectActor(string name)
         {
-            var a = new ActorInfomation() { Id = id };
+            var a = new ActorInfomation() { Id = Guid.NewGuid(), Name = name };
             SelectCompiledEvent(a);
             return a;
         }

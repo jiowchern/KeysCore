@@ -51,11 +51,12 @@ namespace Regulus.Project.Crystal.Battle
 
                 void IEnableChip.Enable(int index)
                 {
+                    
                     if (index < Player.EnableChips.Length && Player.EnableChips[index] != null)
                     {
                         var chip = Player.EnableChips[index];
                         Player.EnableChips[index] = null;
-                        int idx = _Battlers.Length / 2;
+                        int idx = _Battlers.Length / 2 - 1;
                         if (Player.Energy.Consume(chip.Red[idx], chip.Yellow[idx], chip.Green[idx], chip.Power[idx]))
                         {
                             foreach (var effect in chip.Initiatives)
@@ -76,11 +77,15 @@ namespace Regulus.Project.Crystal.Battle
                 internal void StimulatePassive()
                 {
                     foreach (var ec in Player.EnableChips)
-                    { 
-                        foreach(var effect in ec.Passives)
+                    {
+                        if (ec != null)
                         {
-                            _ExecuteSpell(this , effect, _Battlers);
+                            foreach (var effect in ec.Passives)
+                            {
+                                _ExecuteSpell(this, effect, _Battlers);
+                            }
                         }
+                        
                     }
                 }
 
@@ -233,6 +238,7 @@ namespace Regulus.Project.Crystal.Battle
 
                 if (_Current == null)
                 {
+                    
                     if (TimeOutEvent != null)
                         TimeOutEvent(new KillingStage((from battler in _Battlers select battler.Player).ToArray() , _ChipLibrary , _RoundCount - 1 ) );
                     TimeOutEvent = null;

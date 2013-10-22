@@ -12,6 +12,7 @@ namespace Regulus.Project.Crystal.Game.Stage
 
         public delegate void OnParking();
         public event OnParking ParkingEvent;
+
         private Remoting.ISoulBinder _Binder;
         IMap _Map;
         ActorInfomation _ActorInfomation;
@@ -24,7 +25,8 @@ namespace Regulus.Project.Crystal.Game.Stage
             
             this._Binder = binder;
 
-            _Entity = new Entity();
+            _Entity = new Entity(_ActorInfomation.Id);
+            
         }
 
         void Regulus.Game.IStage.Enter()
@@ -56,10 +58,10 @@ namespace Regulus.Project.Crystal.Game.Stage
         {
             
         }
-        void IAdventure.InBattle()
-        {
-            _Map.BattleRequest(_Entity.Id);
-        }
         
+        Remoting.Value<bool> IAdventure.InBattle()
+        {            
+            return _Map.BattleRequest(_Entity.Id);
+        }
     }
 }

@@ -108,5 +108,11 @@ namespace Regulus.Project.Crystal.Standalone
         {
             get { return _Agent.QueryProvider<IDrawChip>(); }
         }
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IBattle> IUser.BattleProvider
+        {
+            get { return _Agent.QueryProvider<IBattle>(); }
+        }
     }
 }

@@ -14,11 +14,23 @@ namespace Regulus.Project.Crystal.Battle
                 public Player Player;
                 public event Func<Player, int, bool> CaptureEvent;
                 int _Difficulty;
+                EnergyGroup[] _EnergyGroup;
                 public bool Done { get; private set; }
-                public Capturer(Player player, int difficulty)
+                public Capturer(Player player, int difficulty )
                 {
+                    
                     _Difficulty = difficulty;
                     Player = player;
+                }
+
+                public void Initial(EnergyGroup[] energy_group)
+                {
+                    _EnergyGroup = energy_group;
+                }
+
+                public void Release()
+                { 
+
                 }
 
                 public void Capture(int idx)
@@ -33,6 +45,16 @@ namespace Regulus.Project.Crystal.Battle
                         return true;
                     }
                     return false;
+                }
+
+                /*EnergyGroup[] ICaptureEnergy.EnergyGroups
+                {
+                    get { return _EnergyGroup; }
+                }*/
+
+                Remoting.Value<EnergyGroup[]> ICaptureEnergy.QueryEnergyGroups()
+                {
+                    return _EnergyGroup;
                 }
             }
 
@@ -58,10 +80,23 @@ namespace Regulus.Project.Crystal.Battle
             {
                 if (idx < _Groups.Length && _Groups[idx].Owner == Guid.Empty)
                 {
+                    _IncEnergy(_Groups[idx].Energy.Red, player.Energy.IncRed);
+                    _IncEnergy(_Groups[idx].Energy.Green, player.Energy.IncGreen);
+                    _IncEnergy(_Groups[idx].Energy.Yellow, player.Energy.IncYellow);
+                    _IncEnergy(_Groups[idx].Energy.Power, player.Energy.IncPower);
+
                     _Groups[idx].Owner = player.Pet.Owner;
                     return true;
                 }
                 return false;
+            }
+
+            private void _IncEnergy(int count, Func<bool> func)
+            {
+                for (int i = 0; i < count; ++i)
+                {
+                    func();
+                }
             }
             void Regulus.Game.IStage.Enter()
             {                
@@ -81,13 +116,14 @@ namespace Regulus.Project.Crystal.Battle
                         energy.IncPower , ()=>{eg.Hp = 1; return true;} , ()=>{eg.Change = 1; return true;}
                     };
 
-                    incs1[Regulus.Utility.Random.Next(0, incs2.Length)]();
+                    incs2[Regulus.Utility.Random.Next(0, incs2.Length)]();
                     _Groups[i] = eg ;
                 }
 
                 foreach (var capture in _Capturers)
                 {
-                    capture.Player.OnSpawnCaptureEnergy(capture);                    
+                    capture.Player.OnSpawnCaptureEnergy(capture);
+                    capture.Initial(_Groups);
                     capture.CaptureEvent += _OnCapture;
                 }
 
@@ -101,7 +137,8 @@ namespace Regulus.Project.Crystal.Battle
                 foreach (var capture in _Capturers)
                 {
                     capture.CaptureEvent -= _OnCapture;
-                    capture.Player.OnUnspawnCaptureEnergy();                    
+                    capture.Player.OnUnspawnCaptureEnergy();
+                    capture.Release();
                 }
             }
 

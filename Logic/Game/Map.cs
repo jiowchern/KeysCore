@@ -25,20 +25,26 @@ namespace Regulus.Project.Crystal.Game
             _Entitys.Remove(entity);
         }
 
-        void IMap.BattleRequest(Guid requester)
+        Remoting.Value<bool> IMap.BattleRequest(Guid requester)
         {
-            BattleRequester br = new BattleRequester();
-            int size = 0;
-            foreach (var entity in _Entitys)
+            
+            if (_Entitys.Count >= 2 )
             {
-                BattlerInfomation battler = new BattlerInfomation();
-                battler.Id = entity.Id;
-                battler.Side = (BattlerSide)(size % 2);
-                br.Battlers.Add(battler);
-                size++;
-            }
+                BattleRequester br = new BattleRequester();
+                int size = 0;
+                foreach (var entity in _Entitys)
+                {
+                    BattlerInfomation battler = new BattlerInfomation();
+                    battler.Id = entity.Id;
+                    battler.Side = (BattlerSide)(size % 2);
+                    br.Battlers.Add(battler);
+                    size++;
+                }
 
-            _BroadcastBattler(_Battle.Open(br), (from battler in br.Battlers select battler.Id).ToArray());
+                _BroadcastBattler(_Battle.Open(br), (from battler in br.Battlers select battler.Id).ToArray());
+                return true;
+            }
+            return false;
         }
         private void _BroadcastBattler(Remoting.Value<IBattleAdmissionTickets> value, Guid[] battlers)
         {

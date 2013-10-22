@@ -19,7 +19,14 @@ namespace Regulus.Project.Crystal.Standalone
 
         Regulus.Remoting.Value<Pet> IStorage.FindPet(Guid id)
         {
-            return new Pet();
+            var pet = new Pet() { Id = Guid.NewGuid(), Owner = id };
+            pet.Energy = new Energy(7);
+            Func<bool>[] energyIncs = new Func<bool>[]{pet.Energy.IncGreen , pet.Energy.IncRed , pet.Energy.IncYellow }; 
+            for(int i = 0 ; i < 3 ; ++i)
+            {
+                energyIncs[Regulus.Utility.Random.Next(0, 3)]();
+            }
+            return pet;
         }
 
         void IStorage.Add(Pet pet)
@@ -28,3 +35,4 @@ namespace Regulus.Project.Crystal.Standalone
         }
     }
 }
+

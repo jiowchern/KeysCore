@@ -16,12 +16,12 @@ namespace Regulus.Project.Crystal
 
     public interface IParking
     {        
-        Value<ActorInfomation> SelectActor(Guid id);
+        Value<ActorInfomation> SelectActor(string name);
     };
 
     public interface IAdventure
     {
-        void InBattle();
+        Value<bool> InBattle();
     }
 
     public interface IStorage
@@ -44,6 +44,11 @@ namespace Regulus.Project.Crystal
     {
         Value<IBattleStage> Visit(Pet pet);
     }
+    public interface IBattle
+    { 
+
+        event Action<Pet> PlayingPetEvent;  
+    }
 
     public interface IBattleStage
     {
@@ -58,6 +63,10 @@ namespace Regulus.Project.Crystal
         event Action    UnspawnDrawChipEvent;
     }
 
+    public interface IBattler
+    { 
+
+    }
     public interface IReadyCaptureEnergy
     {
         void UseChip(int[] chip_indexs);
@@ -66,6 +75,8 @@ namespace Regulus.Project.Crystal
     
     public interface ICaptureEnergy
     {
+        //EnergyGroup[] EnergyGroups { get; }
+        Value<EnergyGroup[]> QueryEnergyGroups();
         Value<bool> Capture(int idx);
     }
 
@@ -84,6 +95,8 @@ namespace Regulus.Project.Crystal
 
         void Draw(int index);
     }
+    
+
     
 
 }

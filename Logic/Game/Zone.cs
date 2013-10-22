@@ -10,7 +10,7 @@ namespace Regulus.Project.Crystal.Game
         void Enter(IEntity entity);
         void Leave(IEntity entity);
 
-        void BattleRequest(Guid id);
+        Regulus.Remoting.Value<bool> BattleRequest(Guid id);
 
         event OnMapBattle BattleResponseEvent;
     }

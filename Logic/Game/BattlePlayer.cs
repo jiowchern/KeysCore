@@ -31,7 +31,7 @@ namespace Regulus.Project.Crystal.Battle
             
             public Player()
             {
-                
+                Energy = new Crystal.Energy(7);
                 Hp = 100;
             }
 
@@ -87,7 +87,7 @@ namespace Regulus.Project.Crystal.Battle
             {
                 List<Chip> chips = new List<Chip>();
                 
-                if ( (from ec in EnableChips where ec == null select ec).Count() < EnableChipCount)
+                if ( (from ec in EnableChips where ec == null select ec).Count() > 0)
                 {
                     foreach (var index in chip_indexs)
                     {
@@ -99,7 +99,10 @@ namespace Regulus.Project.Crystal.Battle
                             for (int i = 0; i < EnableChips.Length; ++i)
                             {
                                 if (EnableChips[i] == null)
+                                {
                                     EnableChips[i] = chip;
+                                    break;
+                                }
                             }                                
                             chips.Add(chip);                
                         }

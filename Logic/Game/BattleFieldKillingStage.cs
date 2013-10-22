@@ -37,7 +37,7 @@ namespace Regulus.Project.Crystal.Battle
 
             void Regulus.Game.IStage.Update()
             {
-                if (_RoundCount > 0)
+                if (_RoundCount <= 0)
                 {
                     var winnter = (from player in _Players orderby player.Hp descending select player.Side).FirstOrDefault();
                     EndEvent(winnter);

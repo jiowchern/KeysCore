@@ -9,6 +9,11 @@ namespace Regulus.Project.Crystal
     {
         Guid _Id;
 
+        public Entity(Guid id)
+        {
+            _Id = id;
+        }
+
         T IEntity.QueryAttrib<T>()
         {
             return default(T);

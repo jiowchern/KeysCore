@@ -74,6 +74,12 @@ namespace Regulus.Project.Crystal.Remoting
         {
             get { throw new NotImplementedException(); }
         }
+
+
+        Regulus.Remoting.Ghost.IProviderNotice<IBattle> IUser.BattleProvider
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }
 

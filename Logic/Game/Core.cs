@@ -75,7 +75,7 @@ namespace Regulus.Project.Crystal.Game
 
         void _ToBattle(IBattleAdmissionTickets battle_admission_tickets)
         {
-            var stage = new Regulus.Project.Crystal.Game.Stage.Battle(battle_admission_tickets, _AccountInfomation, Binder,  Storage);
+            var stage = new Regulus.Project.Crystal.Game.Stage.Battle(battle_admission_tickets, _ActorInfomation, Binder, Storage);
             stage.EndEvent += () =>
             {
                 _ToAdventure(_ActorInfomation);

@@ -6,75 +6,7 @@ using System.Text;
 
 namespace Regulus.Project.Crystal
 {
-    namespace Game
-    {
-        [Serializable]
-        public class Value<T> where T : IComparable 
-        {
-            T _Min;
-            T _Max;
-            public Value(T min,T max)
-            {
-                
-                _Set(min, max);
-            }
 
-            private void _Set(T min, T max)
-            {
-                _Min = min;
-                _Max = max;
-
-                if (_Min.CompareTo(_Max) > 0)
-                {
-                    _Min = _Max;
-                }
-            }
-
-            static T Add<T>(T a, T b)
-            {
-                //TODO: re-use delegate!
-                // declare the parameters
-                var paramA = System.Linq.Expressions.Expression.Parameter(typeof(T), "a");
-                var paramB = System.Linq.Expressions.Expression.Parameter(typeof(T), "b");
-                // add the parameters together
-                System.Linq.Expressions.BinaryExpression body = System.Linq.Expressions.Expression.Add(paramA, paramB);                
-                // compile it
-                var add = System.Linq.Expressions.Expression.Lambda<Func<T, T, T>>(body, paramA, paramB).Compile();
-                // call it
-                return add(a, b);
-            }
-
-            static T Sub<T>(T a, T b)
-            {
-                //TODO: re-use delegate!
-                // declare the parameters
-                var paramA = System.Linq.Expressions.Expression.Parameter(typeof(T), "a");
-                var paramB = System.Linq.Expressions.Expression.Parameter(typeof(T), "b");
-                // add the parameters together
-                System.Linq.Expressions.BinaryExpression body = System.Linq.Expressions.Expression.Subtract(paramA, paramB);                
-                    // compile it
-                Func<T, T, T> add = System.Linq.Expressions.Expression.Lambda<Func<T, T, T>>(body, paramA, paramB).Compile();
-                // call it
-                return add(a, b);
-            }
-
-            public static Value<T> operator +(Value<T> value1, Value<T> value2)
-            {
-                T value = Add(value1._Min, value2._Min);
-                return new Value<T>(value, value1._Max);
-            }
-
-            public static Value<T> operator -(Value<T> value1, Value<T> value2)
-            {
-                T value = Sub(value1._Min, value2._Min);
-                return new Value<T>(value, value1._Max);
-            }
-            public static implicit operator T(Value<T> value)
-            {
-                return value._Min;
-            }
-        }
-    };
 
     [Serializable]
     public class EnergyGroup
@@ -198,6 +130,7 @@ namespace Regulus.Project.Crystal
     public class ActorInfomation
     {
         public Guid Id { get; set; }
+        public string Name { get; set; }
     }
     [Serializable]
     public enum UserStatus
