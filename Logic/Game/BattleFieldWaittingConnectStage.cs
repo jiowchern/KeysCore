@@ -11,7 +11,7 @@ namespace Regulus.Project.Crystal.Battle
         {
             public class ReadyInfomation
             {
-                public Regulus.Remoting.Value<IBattleStage> ReadyCaptureEnergy;
+                public Regulus.Remoting.Value<IBattlerBehavior> BattleBehavior;
                 public BattlerInfomation Battler;
                 public Pet Pet;
             }
@@ -58,10 +58,14 @@ namespace Regulus.Project.Crystal.Battle
                     {
                         var cl = _GenerateCommonChipSet();
                         List<Player> players = new List<Player>();
+
+                        int side = 0;
                         foreach (var ri in _ReadyInfomations)
                         {
                             var player = new Player(ri.Pet);
-                            ri.ReadyCaptureEnergy.SetValue(player);
+                            player.Initial(cl , (BattlerSide)(side++ % 2));
+                            
+                            ri.BattleBehavior.SetValue(player);
                             players.Add(player);
                         }
 
@@ -117,15 +121,15 @@ namespace Regulus.Project.Crystal.Battle
                 return cl;
             }
 
-            Regulus.Remoting.Value<IBattleStage> IBattleAdmissionTickets.Visit(Pet pet)
+            Regulus.Remoting.Value<IBattlerBehavior> IBattleAdmissionTickets.Visit(Pet pet)
             {
-                Regulus.Remoting.Value<IBattleStage> rce = new Remoting.Value<IBattleStage>();
+                Regulus.Remoting.Value<IBattlerBehavior> rce = new Remoting.Value<IBattlerBehavior>();
                 ReadyInfomation ri = (from readyInfomation in _ReadyInfomations where readyInfomation.Battler.Id == pet.Owner && readyInfomation.Pet == null select readyInfomation).FirstOrDefault();
                 if (ri != null)
                 {                                     
                     ri.Pet = pet;
-                    ri.ReadyCaptureEnergy = rce;                    
-                    _Count++;
+                    ri.BattleBehavior = rce;                    
+                    _Count++;                    
                 }
                 return rce;
             }

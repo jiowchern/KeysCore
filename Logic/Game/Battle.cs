@@ -48,7 +48,7 @@ namespace Regulus.Project.Crystal.Battle
 
 namespace Regulus.Project.Crystal.Game.Stage
 {
-    class Battle : Regulus.Game.IStage, IBattle
+    class Battle : Regulus.Game.IStage
     {
 
         public delegate void OnEnd();
@@ -70,7 +70,7 @@ namespace Regulus.Project.Crystal.Game.Stage
         }
         void Regulus.Game.IStage.Enter()
         {
-            _Binder.Bind<IBattle>(this);
+           
             var petResult = _Storage.FindPet(_ActorInfomation.Id);            
             petResult.OnValue += _OnPetReady;
             
@@ -80,14 +80,20 @@ namespace Regulus.Project.Crystal.Game.Stage
         void _OnPetReady(Pet pet)
         {
             _Pet = pet;
-            if (_PlayingPetEvent != null)
-                _PlayingPetEvent(_Pet);
+            
             var value = _BattleAdmissionTickets.Visit(_Pet);
             value.OnValue += _OnStart;
         }
-
-        void _OnStart(IBattleStage battle_stage)
+        IBattler _Battler;
+        void _OnStart(IBattlerBehavior battle_stage)
         {
+            var val = battle_stage.QueryBattler();
+            val.OnValue += (battler) =>
+            {
+                _Binder.Bind<IBattler>(battler);
+                _Battler = battler;
+            };
+
             battle_stage.SpawnReadyCaptureEnergyEvent += (obj) =>
             {
                 _Binder.Bind<IReadyCaptureEnergy>(obj);
@@ -129,7 +135,7 @@ namespace Regulus.Project.Crystal.Game.Stage
 
         void Regulus.Game.IStage.Leave()
         {
-            _Binder.Unbind<IBattle>(this);
+            _Binder.Unbind<IBattler>(_Battler);
         }
 
         void Regulus.Game.IStage.Update()
@@ -138,11 +144,6 @@ namespace Regulus.Project.Crystal.Game.Stage
         }
 
 
-        event Action<Pet> _PlayingPetEvent;
-        event Action<Pet> IBattle.PlayingPetEvent
-        {
-            add { _PlayingPetEvent += value; }
-            remove { _PlayingPetEvent -= value; }
-        }
+       
     }
 }

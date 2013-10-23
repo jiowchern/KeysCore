@@ -37,23 +37,14 @@ namespace Regulus.Project.Crystal.Battle
                 {
                     CaptureEvent(Player, idx);
                 }
-                Remoting.Value<bool> ICaptureEnergy.Capture(int idx)
+                
+
+                Remoting.Value<EnergyGroup[]> ICaptureEnergy.Capture(int idx)
                 {
                     if (Done == false && CaptureEvent(Player, idx))
                     {
-                        Done = true;
-                        return true;
+                        Done = true;                        
                     }
-                    return false;
-                }
-
-                /*EnergyGroup[] ICaptureEnergy.EnergyGroups
-                {
-                    get { return _EnergyGroup; }
-                }*/
-
-                Remoting.Value<EnergyGroup[]> ICaptureEnergy.QueryEnergyGroups()
-                {
                     return _EnergyGroup;
                 }
             }

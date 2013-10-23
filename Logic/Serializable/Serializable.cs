@@ -10,7 +10,7 @@ namespace Regulus.Project.Crystal
 
     [Serializable]
     public class EnergyGroup
-    {
+    {        
         public Energy Energy;
         public int Hp;
         public int Change;
@@ -116,6 +116,7 @@ namespace Regulus.Project.Crystal
     {                
         public Guid Id { get; set; }
         public Guid Owner { get; set; }
+        public string Name { get; set; }
         public Energy Energy { get; set; }
     }
 	[Serializable]

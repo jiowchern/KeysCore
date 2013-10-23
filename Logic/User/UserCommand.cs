@@ -97,9 +97,16 @@ namespace Regulus.Project.Crystal
 
         private void _OnBattleEnableChipSupply(IEnableChip obj)
         {
-            _Command.Register<int>("CardLaunched", obj.Enable );
+
+            _Command.RemotingRegister<int, bool>("CardLaunched", obj.Enable, (result)=> 
+            {
+                if (result==false)                
+                    _View.WriteLine("能源不足卡片啟用失敗");
+            });
+            
             _Command.Register("Done", obj.Done);
 
+            
             _RemoveCommands.Add(obj, new string[] 
             {
                 "CardLaunched" , "Done"
@@ -107,17 +114,71 @@ namespace Regulus.Project.Crystal
 
         }
 
-
-        private void _OnBattleSupply(IBattle obj)
+        void _OnEnableChipMessage(string obj)
         {
-            obj.PlayingPetEvent += (pet) =>
+            _View.WriteLine(obj);
+        }
+
+
+        private void _OnBattleSupply(IBattler obj)
+        {
+            
+            _Command.RemotingRegister<Regulus.Project.Crystal.Battle.Chip[]>("HandArea", obj.QueryStabdby, (chips) =>
             {
-                _View.WriteLine("選擇的寵物");
-                _View.WriteLine(pet.Owner.ToString());
-                _View.WriteLine(pet.Energy.Green.ToString());
-                _View.WriteLine(pet.Energy.Red.ToString());
-                _View.WriteLine(pet.Energy.Yellow.ToString());
-            };
+                _View.Write("手牌區 ");
+                foreach (var chip in chips)
+                {
+
+                    if (chip != null)
+                    {
+                        _View.Write("[ " + chip.Name + " ]");
+                    }
+                    else
+                    {
+                        _View.Write("[ 空 ]");
+                    }
+                }
+                _View.WriteLine("");
+            });
+
+            _Command.RemotingRegister<Regulus.Project.Crystal.Battle.Chip[]>("EnableZone", obj.QueryEnable, (chips) =>
+               {
+                   _View.Write("啟動區 ");
+                   foreach (var chip in chips)
+                   {
+
+                       if (chip != null)
+                       {
+                           _View.Write("[ " + chip.Name + " ]");
+                       }
+                       else
+                       {
+                           _View.Write("[ 空 ]");
+                       }
+                   }
+                   _View.WriteLine("");
+               });
+            _Command.RemotingRegister<Pet>("QueryPet", obj.QueryPet, 
+                (pet) => 
+                {
+                    _View.WriteLine("寵物[" + pet.Name + "]資料");
+                    _View.WriteLine("Red " + pet.Energy.Red );
+                    _View.WriteLine("Green " + pet.Energy.Green);
+                    _View.WriteLine("Yellow " + pet.Energy.Yellow);
+                    _View.WriteLine("特殊 " + pet.Energy.Power);
+                });
+            _RemoveCommands.Add(obj, new string[] 
+            {
+                "QueryPet" , "HandArea" , "EnableZone"
+            });
+
+            obj.ActiveEvent += _OnEnableChipMessage;
+            obj.PassiveEvent += _OnEnableChipMessage;
+            _RemoveEvents.Add(obj, new Action[] { ()=>
+            {
+                obj.ActiveEvent -= _OnEnableChipMessage;
+                obj.PassiveEvent -= _OnEnableChipMessage;
+            } });
         }
 
         
@@ -129,26 +190,26 @@ namespace Regulus.Project.Crystal
 
         private void _OnBattleCaptureEnergyProviderSupply(ICaptureEnergy obj)
         {
-            _Command.RemotingRegister<EnergyGroup[]>("QueryEnergys", obj.QueryEnergyGroups , (energy_groups) => 
+            
+            
+            _Command.RemotingRegister<int, EnergyGroup[]>("Capture", obj.Capture, (energy_groups) => 
             {
-                foreach(var eg in energy_groups)
+                _View.WriteLine("====能源x" + energy_groups.Length + "====");
+                foreach (var eg in energy_groups)
                 {
-                    _View.WriteLine("====能源包====");
-                    _View.WriteLine("R:" + eg.Energy.Red);
-                    _View.WriteLine("Y:" + eg.Energy.Yellow);
-                    _View.WriteLine("G:" + eg.Energy.Green);
-                    _View.WriteLine("P:" + eg.Energy.Power);
-                    
+                    _View.Write("R:" + eg.Energy.Red + " ");
+                    _View.Write("Y:" + eg.Energy.Yellow + " ");
+                    _View.Write("G:" + eg.Energy.Green + " ");
+                    _View.Write("P:" + eg.Energy.Power + " ");
+                    _View.Write(eg.Owner == Guid.Empty ? "未奪取" : "被奪取");
+                    _View.WriteLine("");
+
                 }
-            });
-            _Command.RemotingRegister<int, bool>("Capture", obj.Capture, (success) => 
-            {
-                _View.WriteLine("奪能" + (success? "成功" : "失敗"));
             });
 
             _RemoveCommands.Add(obj, new string[] 
             {
-                "Capture" , "QueryEnergys"
+                "Capture" 
             });
         }
 
@@ -156,6 +217,7 @@ namespace Regulus.Project.Crystal
 
         private void _OnBattleReadyCaptureEnergySupply(IReadyCaptureEnergy readycaptureenergy)
         {
+            
             _Command.Register<string>("CoverCard", (param) =>
             {
                 var indexs = param.Split(',');
@@ -176,7 +238,7 @@ namespace Regulus.Project.Crystal
         {
             foreach(var chip in chips)
             {
-                _View.WriteLine("覆蓋了卡片 " + chip.Name);
+                _View.WriteLine("激發特性 : " + chip.Name);
             }
             
         }
@@ -211,7 +273,7 @@ namespace Regulus.Project.Crystal
             Action<ActorInfomation> selectActorReturn = (actorInfomation) =>
             {
                 _View.WriteLine("選擇角色 : " + actorInfomation.Id );
-                _View.WriteLine("Name : " + actorInfomation.Name);
+                _View.WriteLine("名稱 : " + actorInfomation.Name);
             };
 
             _Command.RemotingRegister<string, ActorInfomation>("SelectActor", parking.SelectActor, selectActorReturn);

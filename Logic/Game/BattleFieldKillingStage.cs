@@ -40,6 +40,10 @@ namespace Regulus.Project.Crystal.Battle
                 if (_RoundCount <= 0)
                 {
                     var winnter = (from player in _Players orderby player.Hp descending select player.Side).FirstOrDefault();
+                    foreach (var p in _Players)
+                    {
+                        p.Relese();
+                    }
                     EndEvent(winnter);
                 }
                 else
@@ -51,6 +55,10 @@ namespace Regulus.Project.Crystal.Battle
 
                     if (winnters[0].Hp == 0)
                     {
+                        foreach (var p in _Players)
+                        {
+                            p.Relese();
+                        }
                         EndEvent(winnters[1].Side);
                     }
                     else

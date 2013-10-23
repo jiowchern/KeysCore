@@ -9,7 +9,7 @@ namespace Regulus.Project.Crystal.Battle
     public partial class Field : Regulus.Game.IFramework
     {
 
-        public class Player : IBattleStage            
+        public class Player : IBattlerBehavior , IBattler
         {
             public int Hp { get; set; }
             public const int UsedCardCount = 3;
@@ -40,8 +40,9 @@ namespace Regulus.Project.Crystal.Battle
                 this.Pet = pet;
             }
 
-            internal void Initial(ChipLibrary chiplibrary)
+            internal void Initial(ChipLibrary chiplibrary , BattlerSide side)
             {
+                Side = side;
                 EnableChips = new Chip[EnableChipCount];
                 RecycleChip = new ChipLibrary();
                 StandbyChip = new Chip[5];
@@ -53,6 +54,14 @@ namespace Regulus.Project.Crystal.Battle
                 }
                 SourceChip.Shuffle();
                 Licensing();
+
+                
+                
+            }
+
+            public void Relese()
+            {
+                
             }
 
             internal void Licensing()
@@ -129,64 +138,104 @@ namespace Regulus.Project.Crystal.Battle
                 return chips;
             }
 
-            
-
-            
-
             public Action<IReadyCaptureEnergy> OnSpawnReadyCaptureEnergy;
-            event Action<IReadyCaptureEnergy> IBattleStage.SpawnReadyCaptureEnergyEvent
+            event Action<IReadyCaptureEnergy> IBattlerBehavior.SpawnReadyCaptureEnergyEvent
             {
                 add { OnSpawnReadyCaptureEnergy += value; }
                 remove { OnSpawnReadyCaptureEnergy -= value; }
             }
 
             public Action<ICaptureEnergy> OnSpawnCaptureEnergy;
-            event Action<ICaptureEnergy> IBattleStage.SpawnCaptureEnergyEvent
+            event Action<ICaptureEnergy> IBattlerBehavior.SpawnCaptureEnergyEvent
             {
                 add { OnSpawnCaptureEnergy += value; }
                 remove { OnSpawnCaptureEnergy -= value; }
             }
 
             public Action<IEnableChip> OnSpawnEnableChip;
-            event Action<IEnableChip> IBattleStage.SpawnEnableChipEvent
+            event Action<IEnableChip> IBattlerBehavior.SpawnEnableChipEvent
             {
                 add { OnSpawnEnableChip += value; }
                 remove { OnSpawnEnableChip -= value; }
             }
 
             public Action<IDrawChip> OnSpawnDrawChip;
-            event Action<IDrawChip> IBattleStage.SpawnDrawChipEvent
+            event Action<IDrawChip> IBattlerBehavior.SpawnDrawChipEvent
             {
                 add { OnSpawnDrawChip += value; }
                 remove { OnSpawnDrawChip -= value; }
             }
 
             public  Action    OnUnspawnReadyCaptureEnergy;
-            event Action    IBattleStage.UnspawnReadyCaptureEnergyEvent
+            event Action    IBattlerBehavior.UnspawnReadyCaptureEnergyEvent
             {
                 add { OnUnspawnReadyCaptureEnergy += value; }
                 remove { OnUnspawnReadyCaptureEnergy -= value; }
             }
 
             public  Action    OnUnspawnCaptureEnergy;
-            event Action    IBattleStage.UnspawnCaptureEnergyEvent
+            event Action    IBattlerBehavior.UnspawnCaptureEnergyEvent
             {
                 add { OnUnspawnCaptureEnergy += value; }
                 remove { OnUnspawnCaptureEnergy -= value; }
             }
 
             public Action OnUnspawnEnableChip;
-            event Action    IBattleStage.UnspawnEnableChipEvent
+            event Action    IBattlerBehavior.UnspawnEnableChipEvent
             {
                 add { OnUnspawnEnableChip += value; }
                 remove { OnUnspawnEnableChip -= value; }
             }
 
             public Action OnUnspawnDrawChip;
-            event Action    IBattleStage.UnspawnDrawChipEvent
+            event Action    IBattlerBehavior.UnspawnDrawChipEvent
             {
                 add { OnUnspawnDrawChip += value; }
                 remove { OnUnspawnDrawChip -= value; }
+            }
+
+           
+
+            Remoting.Value<Pet> IBattler.QueryPet()
+            {
+                return Pet;
+            }
+
+            Remoting.Value<IBattler> IBattlerBehavior.QueryBattler()
+            {
+                return this;
+            }
+
+            Remoting.Value<Chip[]> IBattler.QueryStabdby()
+            {
+                return StandbyChip;
+            }
+
+            Remoting.Value<Chip[]> IBattler.QueryEnable()
+            {
+                return EnableChips;
+            }
+
+            public void OnPassiveMessage(string msg)
+            {
+                _PassiveEvent(msg);
+            }
+            event Action<string> _PassiveEvent;
+            event Action<string> IBattler.PassiveEvent
+            {
+                add { _PassiveEvent += value; }
+                remove { _PassiveEvent -= value; }
+            }
+
+            public void OnActiveMessage(string msg)
+            {
+                _ActiveEvent (msg);
+            }
+            event Action<string> _ActiveEvent;
+            event Action<string> IBattler.ActiveEvent
+            {
+                add { _ActiveEvent += value; }
+                remove { _ActiveEvent -= value; }
             }
         }
     }

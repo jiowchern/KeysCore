@@ -42,31 +42,35 @@ namespace Regulus.Project.Crystal
 
     public interface IBattleAdmissionTickets
     {
-        Value<IBattleStage> Visit(Pet pet);
+        Value<IBattlerBehavior> Visit(Pet pet);
     }
-    public interface IBattle
-    { 
-
-        event Action<Pet> PlayingPetEvent;  
-    }
-
-    public interface IBattleStage
+    
+    public interface IBattler
     {
+        event Action<string> PassiveEvent;
+        event Action<string> ActiveEvent;
+
+        Value<Regulus.Project.Crystal.Battle.Chip[]> QueryStabdby();
+        Value<Regulus.Project.Crystal.Battle.Chip[]> QueryEnable();
+        Value<Pet> QueryPet();        
+    }
+
+    public interface IBattlerBehavior
+    {
+        Value<IBattler> QueryBattler();
         event Action<IReadyCaptureEnergy> SpawnReadyCaptureEnergyEvent;
         event Action<ICaptureEnergy> SpawnCaptureEnergyEvent;
         event Action<IEnableChip> SpawnEnableChipEvent;
         event Action<IDrawChip> SpawnDrawChipEvent;
 
+        
         event Action    UnspawnReadyCaptureEnergyEvent;
         event Action    UnspawnCaptureEnergyEvent;
         event Action    UnspawnEnableChipEvent;
         event Action    UnspawnDrawChipEvent;
     }
 
-    public interface IBattler
-    { 
-
-    }
+    
     public interface IReadyCaptureEnergy
     {
         void UseChip(int[] chip_indexs);
@@ -74,10 +78,8 @@ namespace Regulus.Project.Crystal
     }
     
     public interface ICaptureEnergy
-    {
-        //EnergyGroup[] EnergyGroups { get; }
-        Value<EnergyGroup[]> QueryEnergyGroups();
-        Value<bool> Capture(int idx);
+    {        
+        Value<EnergyGroup[]> Capture(int idx);
     }
 
     public interface IRemoveEnergy
@@ -86,8 +88,9 @@ namespace Regulus.Project.Crystal
     }
     public interface IEnableChip
     {
-        void Enable(int index);
+        Value<bool> Enable(int index);
         void Done();
+        
     }
     
     public interface IDrawChip

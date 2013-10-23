@@ -61,8 +61,7 @@ namespace Regulus.Project.Crystal.Battle
                 _Timeout = new Utility.TimeCounter();
                 _Decideds = new List<Decided>();
                 foreach(var player in _Players)
-                {
-                    player.Initial(_ChipLibrary);
+                {                    
                     
                     var decided = new Decided() { Owner = player };                    
                     

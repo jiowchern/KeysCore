@@ -33,7 +33,7 @@ namespace Regulus.Project.Crystal.Battle
                 public bool Done { get 
                 {
                     if (_Time != null)
-                        return new System.TimeSpan(_Time.Ticks).TotalSeconds > 60 || _Done;
+                        return new System.TimeSpan(_Time.Ticks).TotalSeconds > 600 || _Done;
                     return false;
                 } }
 
@@ -49,7 +49,7 @@ namespace Regulus.Project.Crystal.Battle
                     _Time = new Utility.TimeCounter();
                 }
 
-                void IEnableChip.Enable(int index)
+                Regulus.Remoting.Value<bool> IEnableChip.Enable(int index)
                 {
                     
                     if (index < Player.EnableChips.Length && Player.EnableChips[index] != null)
@@ -63,10 +63,17 @@ namespace Regulus.Project.Crystal.Battle
                             {
                                 _ExecuteSpell(this, effect, _Battlers);
                             }
+                            Player.RecycleChip.Push(chip);
+                            Player.RecycleChip.Push(_GenerateChip());
+                            return true;
                         }
-                        Player.RecycleChip.Push(chip);
-                        Player.RecycleChip.Push(_GenerateChip());
+                        else
+                        {
+                            Player.EnableChips[index] = chip;
+                        }
+                        
                     }
+                    return false;
                 }
 
                 private Chip _GenerateChip()
@@ -81,7 +88,7 @@ namespace Regulus.Project.Crystal.Battle
                         if (ec != null)
                         {
                             foreach (var effect in ec.Passives)
-                            {
+                            {                                
                                 _ExecuteSpell(this, effect, _Battlers);
                             }
                         }
@@ -89,18 +96,21 @@ namespace Regulus.Project.Crystal.Battle
                     }
                 }
 
-                private static void _ExecuteSpell(Battler battler, int effect, Battler[] battlers)
+                private void _ExecuteSpell(Battler battler, int effect, Battler[] battlers)
                 {
                     if (effect == 1)
                     {
                         if (battler.Player.Energy.Green == 0)
                         {
                             battler.AddAttack(6);
+                            Player.OnPassiveMessage(battler.Name + "因為[下風突襲]能力啟用攻擊力+6");                            
                         }
+                        
                     }
                     if (effect == 2)
                     {
                         battler.Player.Hp += 3;
+                        Player.OnPassiveMessage(battler.Name + "因為[築巢]能力啟用希格斯+3");                            
                     }
 
                     if (effect == 3)
@@ -114,6 +124,9 @@ namespace Regulus.Project.Crystal.Battle
                                 target.SubGreen();
                                 target.SubGreen();
                                 target.Injuries(damage);
+
+
+                                Player.OnActiveMessage(battler.Name + "發動下風突襲 >" + target.Name + "損失" + damage + "希格斯");
                             }
                             
                         }
@@ -122,6 +135,7 @@ namespace Regulus.Project.Crystal.Battle
                     {
                         battler.TurnonProtection();
                         battler.IncRed();
+                        Player.OnActiveMessage(battler.Name + "發動築巢獲得保護狀態");
                     }
                 }
                 int _Protection = 1;
@@ -168,6 +182,9 @@ namespace Regulus.Project.Crystal.Battle
                 {
                     _Done = true;
                 }
+                
+
+                public string Name { get { return Player.Pet.Name; } }
             }
 
             public delegate void OnTimeOut(KillingStage stage);

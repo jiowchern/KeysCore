@@ -7,6 +7,11 @@ namespace Regulus.Project.Crystal.Standalone
 {
 	class Storage : Regulus.Project.Crystal.IStorage
 	{
+        
+        public Storage()
+        { 
+
+        }
 		Regulus.Remoting.Value<AccountInfomation> IStorage.FindAccountInfomation(string name)
 		{
 			return new AccountInfomation() { Id = Guid.Empty , Name = name , Password = "1" };
@@ -26,6 +31,7 @@ namespace Regulus.Project.Crystal.Standalone
             {
                 energyIncs[Regulus.Utility.Random.Next(0, 3)]();
             }
+            pet.Name = Regulus.Utility.Random.Next(0, 1) == 0 ? "蝙蝠" : "甲蟲";
             return pet;
         }
 

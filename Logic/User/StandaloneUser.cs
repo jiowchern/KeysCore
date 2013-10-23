@@ -110,9 +110,9 @@ namespace Regulus.Project.Crystal.Standalone
         }
 
 
-        Regulus.Remoting.Ghost.IProviderNotice<IBattle> IUser.BattleProvider
+        Regulus.Remoting.Ghost.IProviderNotice<IBattler> IUser.BattleProvider
         {
-            get { return _Agent.QueryProvider<IBattle>(); }
+            get { return _Agent.QueryProvider<IBattler>(); }
         }
     }
 }
