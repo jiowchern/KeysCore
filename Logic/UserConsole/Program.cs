@@ -17,11 +17,18 @@ namespace UserConsole
         }
         Regulus.Utility.TimeCounter _Timer;
         Queue<CommandString> _CommandStrings;
-        public BatchCommander(Regulus.Utility.Command command)
+        public BatchCommander(Regulus.Utility.Command command, Regulus.Utility.ConsoleViewer viewer)
         {
             _Timer = new Regulus.Utility.TimeCounter();
-            // TODO: Complete member initialization
+
+            command.Register("1", _1);
+            command.Register("2", _2);
+            command.Register("3", _3);
+            command.Register("4", _4);
+            
             this._Command = command;
+            
+            
 
             _CommandStrings = new Queue<CommandString>();
             _CommandStrings.Enqueue(new CommandString() { Name = "standalong" , Args = new string[]{}});
@@ -36,56 +43,108 @@ namespace UserConsole
             _CommandStrings.Enqueue(new CommandString() { Name = "login", Args = new string[] { "2", "1" } });        
             _CommandStrings.Enqueue(new CommandString() { Name = "selectactor", Args = new string[] { "456" } });
 
+
+            /*_CommandStrings.Enqueue(new CommandString() { Name = "spawncontroller", Args = new string[] { "茄子1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "login", Args = new string[] { "1", "1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectactor", Args = new string[] { "123" } });
+
+            _CommandStrings.Enqueue(new CommandString() { Name = "spawncontroller", Args = new string[] { "彥龍1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "login", Args = new string[] { "2", "1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectactor", Args = new string[] { "456" } });*/
+
             _CommandStrings.Enqueue(new CommandString() { Name = "inbattle", Args = new string[] { } });
             
-
-            for (int i = 0; i < 1; ++i)
-            {
-
-
-
-                _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子" } });                
-                _CommandStrings.Enqueue(new CommandString() { Name = "querypet", Args = new string[] { } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "covercard", Args = new string[] { "0,1" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
-
-                _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "querypet", Args = new string[] { } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "covercard", Args = new string[] { "0,1" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
-
-                _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "capture", Args = new string[] { "0" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "QueryEnergys", Args = new string[] { } });
-
-
-                _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "capture", Args = new string[] { "1" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "QueryEnergys", Args = new string[] { } });
-
-                _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "CardLaunched", Args = new string[] { "0" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "Done", Args = new string[] { } });
-
-                _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "CardLaunched", Args = new string[] { "0" } });
-                _CommandStrings.Enqueue(new CommandString() { Name = "Done", Args = new string[] { } });
-            }
-            
-
         
+        }
+
+        private void  _1()
+        {
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "querypet", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "covercard", Args = new string[] { "0" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
+
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "querypet", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "covercard", Args = new string[] { "0,1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
+
+            /*_CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "querypet", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "covercard", Args = new string[] { "0" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
+
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "querypet", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "covercard", Args = new string[] { "0,1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "HandArea", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "EnableZone", Args = new string[] { } });*/
+        }
+        private void _2()
+        {
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "capture", Args = new string[] { "0" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "QueryEnergys", Args = new string[] { } });
+
+
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "capture", Args = new string[] { "1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "QueryEnergys", Args = new string[] { } });
+
+            /*_CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "capture", Args = new string[] { "2" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "QueryEnergys", Args = new string[] { } });
+
+
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "capture", Args = new string[] { "3" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "QueryEnergys", Args = new string[] { } });*/
+
+            
+        }
+        private void _3()
+        {
+            
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "QuerySpeed", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "CardLaunched", Args = new string[] { "0" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "Done", Args = new string[] { } });
+
+            /*_CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "QuerySpeed", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "CardLaunched", Args = new string[] { "0" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "Done", Args = new string[] { } });*/
+        }
+        private void _4()
+        {
+            _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "QuerySpeed", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "CardLaunched", Args = new string[] { "0" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "Done", Args = new string[] { } });
+
+            /*_CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍1" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "QuerySpeed", Args = new string[] { } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "CardLaunched", Args = new string[] { "0" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "Done", Args = new string[] { } });*/
         }
 
 
         internal void Update()
         {
-            if (new System.TimeSpan(_Timer.Ticks).TotalSeconds > 0.5)
+            if (new System.TimeSpan(_Timer.Ticks).TotalSeconds > 0.1)
             {
                 _Timer.Reset();
                 if (_CommandStrings.Count > 0)
@@ -139,7 +198,7 @@ namespace UserConsole
             Regulus.Game.IFramework app = application;
             app.Launch();
             application.SetLogMessage(Regulus.Utility.Console.LogFilter.None);
-            var batchCommander = new BatchCommander(application.Command);
+            var batchCommander = new BatchCommander(application.Command , view);
             while (app.Update())
             {                
                 input.Update();

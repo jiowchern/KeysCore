@@ -86,8 +86,9 @@ namespace Regulus.Project.Crystal
     { 
 
     }
-    public interface IEnableChip
+    public interface IEnableChip    
     {
+        Value<BattleSpeed[]> QuerySpeeds();
         Value<bool> Enable(int index);
         void Done();
         

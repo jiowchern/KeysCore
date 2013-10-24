@@ -6,7 +6,12 @@ using System.Text;
 
 namespace Regulus.Project.Crystal
 {
-
+    [Serializable]
+    public class BattleSpeed
+    {
+        public int Speed;
+        public string Name;
+    }
 
     [Serializable]
     public class EnergyGroup

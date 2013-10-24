@@ -23,13 +23,16 @@ namespace Regulus.Project.Crystal.Battle
                     
                 }
 
-                internal void Initial(int speed, Battler[] battlers , ChipLibrary common)
+                internal void Initial(int speed , ChipLibrary common)
                 {
                     _Speed = speed;
-                    _Battlers = battlers;
+                    
                     _Common = common;
                 }
-
+                public void SetBattlers(Battler[] battlers)
+                {
+                    _Battlers = battlers;
+                }
                 public bool Done { get 
                 {
                     if (_Time != null)
@@ -126,7 +129,7 @@ namespace Regulus.Project.Crystal.Battle
                                 target.Injuries(damage);
 
 
-                                Player.OnActiveMessage(battler.Name + "發動下風突襲 >" + target.Name + "損失" + damage + "希格斯");
+                                Player.OnActiveMessage(battler.Name + "發動下風突襲 > " + target.Name + "損失" + damage + "希格斯");
                             }
                             
                         }
@@ -184,7 +187,12 @@ namespace Regulus.Project.Crystal.Battle
                 }
                 
 
-                public string Name { get { return Player.Pet.Name; } }
+                public string Name { get { return Player.Pet.Name; } }                
+
+                Remoting.Value<BattleSpeed[]> IEnableChip.QuerySpeeds()
+                {
+                    return (from battler in _Battlers select new BattleSpeed() { Name = battler.Name, Speed = battler.Speed }).ToArray();
+                }
             }
 
             public delegate void OnTimeOut(KillingStage stage);
@@ -205,13 +213,20 @@ namespace Regulus.Project.Crystal.Battle
             void Regulus.Game.IStage.Enter()
             {                
                 Queue<int> signs = new Queue<int>(_BuildSigns());
-                
+
                 foreach (var battler in _Battlers)
                 {
-                    battler.Initial(signs.Dequeue(), _Battlers , _ChipLibrary );
+                    battler.Initial(signs.Dequeue(), _ChipLibrary);
                     battler.StimulatePassive();
                 }
+
                 _Battlers = (from battler in _Battlers where battler.Hp > 0 orderby battler.Speed descending select battler).ToArray();
+
+
+                foreach (var battler in _Battlers)
+                {
+                    battler.SetBattlers(_Battlers);                    
+                }
                 _Standby = new Queue<Battler>(_Battlers);
 
                 _Current = _NextBattler(_Standby);

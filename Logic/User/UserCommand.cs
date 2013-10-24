@@ -26,7 +26,7 @@ namespace Regulus.Project.Crystal
             _System.StatusProvider.Supply += _OnStatusSupply;
             _System.StatusProvider.Unsupply += _Unsupply;
 
-            _System.ParkingProvider.Supply += _OnParkingSupply;
+            _System.ParkingProvider.Supply += _OnParkingSupply; 
             _System.ParkingProvider.Unsupply += _Unsupply;
 
             _System.AdventureProvider.Supply += _OnAdventureSupply;
@@ -97,7 +97,16 @@ namespace Regulus.Project.Crystal
 
         private void _OnBattleEnableChipSupply(IEnableChip obj)
         {
+            _Command.RemotingRegister<BattleSpeed[]>("QuerySpeed", obj.QuerySpeeds, (battle_speeds) =>
+                {
+                    _View.Write("順序");
+                    foreach (var battleSpeed in battle_speeds)
+                    {
+                        _View.Write(battleSpeed.Name + "[" + battleSpeed.Speed + "] ,");                        
+                    }
 
+                    _View.WriteLine("");
+                });
             _Command.RemotingRegister<int, bool>("CardLaunched", obj.Enable, (result)=> 
             {
                 if (result==false)                
@@ -109,7 +118,7 @@ namespace Regulus.Project.Crystal
             
             _RemoveCommands.Add(obj, new string[] 
             {
-                "CardLaunched" , "Done"
+                "CardLaunched" , "Done" , "QuerySpeed"
             });
 
         }
@@ -125,7 +134,7 @@ namespace Regulus.Project.Crystal
             
             _Command.RemotingRegister<Regulus.Project.Crystal.Battle.Chip[]>("HandArea", obj.QueryStabdby, (chips) =>
             {
-                _View.Write("手牌區 ");
+                _View.Write("待用區 ");
                 foreach (var chip in chips)
                 {
 
@@ -143,7 +152,7 @@ namespace Regulus.Project.Crystal
 
             _Command.RemotingRegister<Regulus.Project.Crystal.Battle.Chip[]>("EnableZone", obj.QueryEnable, (chips) =>
                {
-                   _View.Write("啟動區 ");
+                   _View.Write("啟用區 ");
                    foreach (var chip in chips)
                    {
 
@@ -161,11 +170,7 @@ namespace Regulus.Project.Crystal
             _Command.RemotingRegister<Pet>("QueryPet", obj.QueryPet, 
                 (pet) => 
                 {
-                    _View.WriteLine("寵物[" + pet.Name + "]資料");
-                    _View.WriteLine("Red " + pet.Energy.Red );
-                    _View.WriteLine("Green " + pet.Energy.Green);
-                    _View.WriteLine("Yellow " + pet.Energy.Yellow);
-                    _View.WriteLine("特殊 " + pet.Energy.Power);
+                    _View.WriteLine("取得寵物[" + pet.Name + "]");                    
                 });
             _RemoveCommands.Add(obj, new string[] 
             {
@@ -201,6 +206,9 @@ namespace Regulus.Project.Crystal
                     _View.Write("Y:" + eg.Energy.Yellow + " ");
                     _View.Write("G:" + eg.Energy.Green + " ");
                     _View.Write("P:" + eg.Energy.Power + " ");
+                    _View.Write("希格斯:" + eg.Hp+ " ");
+                    _View.Write("轉:" + eg.Change+ " ");
+                    _View.Write("回合數:" + eg.Round+ " ");
                     _View.Write(eg.Owner == Guid.Empty ? "未奪取" : "被奪取");
                     _View.WriteLine("");
 
