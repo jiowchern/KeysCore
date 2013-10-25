@@ -5,6 +5,7 @@ namespace Regulus.Project.Crystal
     using Regulus.Remoting;
     public interface IUserStatus
     {
+        void Ready();
         event Action<UserStatus> StatusEvent;
     }
     public interface IVerify

@@ -6,10 +6,10 @@ using System.Text;
 namespace Regulus.Project.Crystal.Game.Stage
 {
 	using Regulus.Project.Crystal.Game;
-	public class First : Regulus.Game.IStage, Regulus.Project.Crystal.IVerify
+	public class Verify : Regulus.Game.IStage, Regulus.Project.Crystal.IVerify
 	{
 		Core _Core;
-        public First(Core core)
+        public Verify(Core core)
         {
             _Core = core;
         }

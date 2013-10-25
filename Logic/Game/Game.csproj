@@ -67,7 +67,7 @@
     <Compile Include="Hall.cs" />
     <Compile Include="Parking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StageFirst.cs" />
+    <Compile Include="StageVerify.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serializable\Serializable.csproj">

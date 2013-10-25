@@ -11,6 +11,7 @@ namespace Regulus.Project.Crystal.Game
 		public IStorage	Storage {get ; private set;}
         IMap _Zone;
         Battle.IZone _Battle;
+        
 
 		public Regulus.Remoting.ISoulBinder Binder { get { return _Binder; }}
 		Regulus.Game.StageMachine _StageMachine;
@@ -38,25 +39,27 @@ namespace Regulus.Project.Crystal.Game
 
 		public void Launch()
 		{
-			_ToFirst();
+			
 		}
 
-		void _ToFirst()
-		{
-            var first = new Regulus.Project.Crystal.Game.Stage.First(this);
-			_StageMachine.Push( first );
-            first.LoginSuccessEvent += _ToParking;
-            _StatusEvent(UserStatus.Verify);             
-		}
+        private void _ToVerify()
+        {
+            var stage = new Regulus.Project.Crystal.Game.Stage.Verify(this);
+            _StageMachine.Push(stage);
+            stage.LoginSuccessEvent += _ToParking;
+            
+            _StatusEvent(UserStatus.Verify);
+        }
 
         AccountInfomation _AccountInfomation;
         void _ToParking(AccountInfomation account_infomation)
         {
             var stage = new Regulus.Project.Crystal.Game.Stage.Parking(Binder , account_infomation);
             stage.SelectCompiledEvent += _ToAdventure;
-            stage.VerifyEvent += _ToFirst;
+            stage.VerifyEvent += _ToVerify;
             _StageMachine.Push(stage);
             _AccountInfomation = account_infomation;
+            
             _StatusEvent(UserStatus.Parking);
         }
 
@@ -101,6 +104,11 @@ namespace Regulus.Project.Crystal.Game
         {
             add { _StatusEvent += value; }
             remove { _StatusEvent -= value; }
+        }
+
+        void IUserStatus.Ready()
+        {
+            _ToVerify();
         }
     }
 }
