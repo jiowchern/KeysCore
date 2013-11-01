@@ -35,11 +35,13 @@ namespace UserConsole
         
             _CommandStrings.Enqueue(new CommandString() { Name = "spawncontroller", Args = new string[] { "茄子"} });
             _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "茄子" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "ready", Args = new string[] { } });
             _CommandStrings.Enqueue(new CommandString() { Name = "login", Args = new string[] { "1" ,"1" } });        
             _CommandStrings.Enqueue(new CommandString() { Name = "selectactor", Args = new string[] {"123" } });
 
             _CommandStrings.Enqueue(new CommandString() { Name = "spawncontroller", Args = new string[] { "彥龍" } });
             _CommandStrings.Enqueue(new CommandString() { Name = "selectcontroller", Args = new string[] { "彥龍" } });
+            _CommandStrings.Enqueue(new CommandString() { Name = "ready", Args = new string[] {} });
             _CommandStrings.Enqueue(new CommandString() { Name = "login", Args = new string[] { "2", "1" } });        
             _CommandStrings.Enqueue(new CommandString() { Name = "selectactor", Args = new string[] { "456" } });
 

@@ -75,5 +75,11 @@ namespace Regulus.Project.Crystal.Game.Stage
 		{
 			
 		}
-	}
+
+
+        Remoting.Value<IVerify> IVerify.Get()
+        {
+            return this;
+        }
+    }
 }

@@ -70,7 +70,7 @@
     </ProjectReference>
     <ProjectReference Include="..\User\User.csproj">
       <Project>{8232ee74-c1f1-49a4-94d7-d67de577050b}</Project>
-      <Name>User %28Projects\Crystal\User%29</Name>
+      <Name>User</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

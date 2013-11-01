@@ -295,8 +295,16 @@ namespace Regulus.Project.Crystal
         
 
         private void _OnStatusSupply(IUserStatus status)
-        {
+        {            
+            
             status.StatusEvent += _OnUserStatusChanged;
+            _RemoveEvents.Add(status , new Action[] 
+            {
+                ()=>{status.StatusEvent -= _OnUserStatusChanged;}
+            });
+
+            _Command.Register("Ready", status.Ready );
+            _RemoveCommands.Add(status, new string[] { "Ready" });
         }
 
         void _OnUserStatusChanged(UserStatus status)

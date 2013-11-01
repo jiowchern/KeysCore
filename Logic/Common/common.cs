@@ -8,10 +8,12 @@ namespace Regulus.Project.Crystal
         void Ready();
         event Action<UserStatus> StatusEvent;
     }
+
     public interface IVerify
     {        
         Value<bool> CreateAccount(string name, string password);
         Value<LoginResult> Login(string name, string password);
+        Value<IVerify> Get();
         void Quit();        
     };
 
